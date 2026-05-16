@@ -1,0 +1,724 @@
+:root {
+    --mri-bg: #050b18;
+    --mri-bg-2: #08111f;
+    --mri-panel: rgba(10, 20, 40, 0.9);
+    --mri-panel-soft: rgba(15, 28, 52, 0.82);
+    --mri-border: rgba(56, 189, 248, 0.18);
+    --mri-border-strong: rgba(56, 189, 248, 0.34);
+    --mri-text: #e2e8f0;
+    --mri-muted: #94a3b8;
+    --mri-faint: #64748b;
+    --mri-accent: #38bdf8;
+    --mri-accent-2: #818cf8;
+    --mri-success: #34d399;
+    --mri-warn: #fbbf24;
+    --mri-orange: #fb923c;
+    --mri-danger: #f87171;
+    --mri-shadow: 0 20px 70px rgba(0, 0, 0, 0.28);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body.mri-page {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--mri-text);
+    font-family: Arial, Helvetica, sans-serif;
+    background:
+        linear-gradient(160deg, rgba(5, 11, 24, 0.98), rgba(8, 17, 31, 0.98)),
+        repeating-linear-gradient(90deg, rgba(56, 189, 248, 0.04) 0 1px, transparent 1px 48px),
+        repeating-linear-gradient(0deg, rgba(56, 189, 248, 0.04) 0 1px, transparent 1px 48px);
+}
+
+.neurosense-nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding: 14px 30px;
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid #e5e7eb;
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.08);
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+}
+
+.nav-logo {
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
+}
+
+.nav-title {
+    color: #111827;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.nav-menu a {
+    color: #374151;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 0;
+    border-bottom: 2px solid transparent;
+}
+
+.nav-menu a:hover,
+.nav-menu a.active {
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+}
+
+.nav-menu a.logout {
+    color: #dc2626;
+}
+
+.mri-shell {
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr);
+    gap: 0;
+    min-height: calc(100vh - 64px);
+}
+
+.mri-sidebar {
+    border-right: 1px solid var(--mri-border);
+    background: rgba(6, 14, 34, 0.92);
+    padding: 28px 24px;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.brand-mark {
+    display: inline-flex;
+    width: 42px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--mri-border-strong);
+    border-radius: 8px;
+    color: var(--mri-accent);
+    font-weight: 800;
+    background: rgba(56, 189, 248, 0.08);
+}
+
+.brand-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--mri-text);
+}
+
+.brand-subtitle {
+    margin-top: 2px;
+    color: var(--mri-faint);
+    font-size: 12px;
+}
+
+.status-pill,
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    border: 1px solid rgba(52, 211, 153, 0.32);
+    border-radius: 999px;
+    padding: 6px 12px;
+    color: var(--mri-success);
+    background: rgba(52, 211, 153, 0.1);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--mri-success);
+    box-shadow: 0 0 12px rgba(52, 211, 153, 0.8);
+}
+
+.sidebar-section {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid var(--mri-border);
+}
+
+.sidebar-section h2 {
+    margin: 0 0 10px;
+    color: var(--mri-accent);
+    font-size: 12px;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+.sidebar-section p,
+.sidebar-footnote {
+    margin: 0;
+    color: var(--mri-muted);
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+.class-list {
+    display: grid;
+    gap: 10px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    color: var(--mri-muted);
+    font-size: 14px;
+}
+
+.class-list li {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+}
+
+.swatch.non {
+    background: var(--mri-success);
+}
+
+.swatch.very-mild {
+    background: var(--mri-warn);
+}
+
+.swatch.mild {
+    background: var(--mri-orange);
+}
+
+.swatch.moderate {
+    background: var(--mri-danger);
+}
+
+.settings-panel label {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 16px 0 8px;
+    color: var(--mri-muted);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.settings-panel output {
+    color: var(--mri-accent);
+}
+
+.settings-panel input[type="range"] {
+    width: 100%;
+    accent-color: var(--mri-accent);
+}
+
+.settings-panel .checkbox-row {
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 18px;
+}
+
+.checkbox-row input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--mri-accent);
+}
+
+.sidebar-footnote {
+    margin-top: 28px;
+    color: var(--mri-faint);
+    font-size: 12px;
+}
+
+.mri-workspace {
+    padding: 34px 42px 44px;
+}
+
+.mri-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    margin-bottom: 26px;
+}
+
+.eyebrow {
+    margin: 0 0 8px;
+    color: var(--mri-accent);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.mri-hero h1 {
+    margin: 0;
+    max-width: 780px;
+    color: var(--mri-text);
+    font-size: 40px;
+    line-height: 1.12;
+}
+
+.hero-copy {
+    max-width: 680px;
+    margin: 12px 0 0;
+    color: var(--mri-muted);
+    font-size: 16px;
+    line-height: 1.65;
+}
+
+.analysis-grid {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.82fr) minmax(420px, 1.35fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.upload-panel,
+.result-panel {
+    border: 1px solid var(--mri-border);
+    border-radius: 8px;
+    background: var(--mri-panel);
+    box-shadow: var(--mri-shadow);
+}
+
+.upload-panel {
+    padding: 24px;
+}
+
+.result-panel {
+    min-height: 560px;
+    padding: 26px;
+}
+
+.panel-heading {
+    margin-bottom: 18px;
+}
+
+.step-label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--mri-accent);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+
+.panel-heading h2,
+.idle-state h2,
+.loading-state h2 {
+    margin: 0;
+    color: var(--mri-text);
+    font-size: 22px;
+    line-height: 1.25;
+}
+
+.drop-zone {
+    display: flex;
+    min-height: 245px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 28px 20px;
+    border: 2px dashed var(--mri-border);
+    border-radius: 8px;
+    color: var(--mri-muted);
+    text-align: center;
+    cursor: pointer;
+    background: rgba(56, 189, 248, 0.04);
+    transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.drop-zone:hover,
+.drop-zone.dragging {
+    border-color: var(--mri-accent);
+    background: rgba(56, 189, 248, 0.08);
+}
+
+.upload-icon {
+    display: inline-flex;
+    width: 42px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--mri-accent), var(--mri-accent-2));
+    color: #ffffff;
+    font-size: 28px;
+    line-height: 1;
+}
+
+.drop-zone strong {
+    color: var(--mri-text);
+    font-size: 16px;
+}
+
+.drop-zone small {
+    max-width: 260px;
+    color: var(--mri-faint);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.preview-wrap {
+    margin: 18px 0 0;
+}
+
+.preview-wrap img {
+    display: block;
+    width: 100%;
+    max-height: 320px;
+    object-fit: contain;
+    border: 1px solid var(--mri-border);
+    border-radius: 8px;
+    background: #020617;
+}
+
+.preview-wrap figcaption {
+    margin-top: 8px;
+    color: var(--mri-muted);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.primary-action {
+    width: 100%;
+    margin-top: 18px;
+    border: 0;
+    border-radius: 8px;
+    padding: 14px 16px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #0ea5e9, #6366f1);
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 12px 30px rgba(56, 189, 248, 0.22);
+}
+
+.primary-action:disabled {
+    cursor: not-allowed;
+    opacity: 0.46;
+    box-shadow: none;
+}
+
+.medical-note {
+    margin: 16px 0 0;
+    border: 1px solid rgba(251, 191, 36, 0.22);
+    border-radius: 8px;
+    padding: 12px;
+    color: var(--mri-warn);
+    background: rgba(251, 191, 36, 0.06);
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.idle-state,
+.loading-state {
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--mri-faint);
+}
+
+.idle-mark {
+    display: inline-flex;
+    width: 72px;
+    height: 72px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    border: 1px solid var(--mri-border);
+    border-radius: 8px;
+    color: var(--mri-accent);
+    background: rgba(56, 189, 248, 0.06);
+    font-weight: 900;
+}
+
+.idle-state p,
+.loading-state p {
+    max-width: 320px;
+    margin: 10px auto 0;
+    color: var(--mri-faint);
+    line-height: 1.6;
+}
+
+.loader {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 16px;
+    border: 4px solid rgba(148, 163, 184, 0.18);
+    border-top-color: var(--mri-accent);
+    border-radius: 999px;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.error-state {
+    border: 1px solid rgba(248, 113, 113, 0.36);
+    border-radius: 8px;
+    padding: 16px;
+    color: #fecaca;
+    background: rgba(248, 113, 113, 0.1);
+    line-height: 1.6;
+}
+
+.prediction-banner {
+    border-left: 4px solid var(--mri-accent);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 18px;
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(129, 140, 248, 0.08));
+}
+
+.prediction-banner h3 {
+    margin: 0;
+    color: var(--mri-accent);
+    font-size: 26px;
+    line-height: 1.2;
+}
+
+.prediction-banner p {
+    margin: 6px 0 0;
+    color: var(--mri-muted);
+    line-height: 1.6;
+}
+
+.metrics-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 18px 0;
+}
+
+.metric-tile {
+    min-height: 96px;
+    border: 1px solid var(--mri-border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    background: rgba(56, 189, 248, 0.06);
+}
+
+.metric-tile span {
+    display: block;
+    color: var(--mri-muted);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.metric-tile strong {
+    display: block;
+    margin-top: 8px;
+    color: var(--mri-accent);
+    font-size: 24px;
+    line-height: 1.2;
+}
+
+.probabilities-box {
+    border: 1px solid var(--mri-border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    background: var(--mri-panel-soft);
+}
+
+.probabilities-box summary {
+    color: var(--mri-accent);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.probabilities-list {
+    display: grid;
+    gap: 14px;
+    margin-top: 16px;
+}
+
+.probability-row {
+    display: grid;
+    grid-template-columns: minmax(120px, 1fr) minmax(120px, 2fr) 58px;
+    gap: 12px;
+    align-items: center;
+    color: var(--mri-muted);
+    font-size: 13px;
+}
+
+.probability-track {
+    height: 9px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.probability-fill {
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    background: var(--mri-accent);
+}
+
+.probability-percent {
+    text-align: right;
+    font-weight: 800;
+}
+
+.xai-heading {
+    margin-top: 24px;
+}
+
+.tab-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--mri-border);
+}
+
+.tab-button {
+    border: 0;
+    border-bottom: 2px solid transparent;
+    padding: 10px 14px;
+    color: var(--mri-muted);
+    background: transparent;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.tab-button.active {
+    color: var(--mri-accent);
+    border-bottom-color: var(--mri-accent);
+}
+
+.xai-image-wrap img {
+    display: block;
+    width: 100%;
+    max-height: 520px;
+    object-fit: contain;
+    border: 1px solid var(--mri-border);
+    border-radius: 8px;
+    background: #020617;
+}
+
+.xai-image-wrap p {
+    margin: 10px 0 0;
+    color: var(--mri-faint);
+    font-size: 13px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.xai-image-wrap .lime-warning {
+    color: var(--mri-warn);
+}
+
+[hidden] {
+    display: none !important;
+}
+
+@media (max-width: 1120px) {
+    .mri-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .mri-sidebar {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        border-right: 0;
+        border-bottom: 1px solid var(--mri-border);
+    }
+
+    .sidebar-brand,
+    .status-pill,
+    .sidebar-footnote {
+        grid-column: 1 / -1;
+    }
+
+    .sidebar-section {
+        margin: 0;
+        padding-top: 0;
+        border-top: 0;
+    }
+
+    .analysis-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 760px) {
+    .neurosense-nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 14px 18px;
+    }
+
+    .nav-menu {
+        justify-content: flex-start;
+        gap: 12px 16px;
+    }
+
+    .mri-sidebar {
+        grid-template-columns: 1fr;
+        padding: 22px 18px;
+    }
+
+    .mri-workspace {
+        padding: 24px 18px 34px;
+    }
+
+    .mri-hero {
+        flex-direction: column;
+    }
+
+    .mri-hero h1 {
+        font-size: 30px;
+    }
+
+    .metrics-row,
+    .probability-row {
+        grid-template-columns: 1fr;
+    }
+
+    .probability-percent {
+        text-align: left;
+    }
+}

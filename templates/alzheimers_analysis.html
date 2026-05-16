@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alzheimer MRI Analysis - NeuroSense</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/alzheimers_mri.css') }}">
+</head>
+<body class="mri-page">
+
+<header class="neurosense-nav">
+    <div class="nav-left">
+        <img src="{{ url_for('static', filename='logo.png') }}" class="nav-logo" alt="NeuroSense">
+        <span class="nav-title">NeuroSense</span>
+    </div>
+
+    <nav class="nav-menu" aria-label="Doctor navigation">
+        <a href="{{ url_for('doctor_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('doctor_patients') }}">Patient Management</a>
+        <a href="{{ url_for('doctor_diagnostics_page') }}">Diagnostics</a>
+        <a href="{{ url_for('alzheimers_analysis') }}" class="active">MRI Analysis</a>
+        <a href="{{ url_for('doctor_interventions') }}">Interventions</a>
+        <a href="{{ url_for('logout') }}" class="logout">Logout</a>
+    </nav>
+</header>
+
+<main class="mri-shell" data-analyze-url="{{ url_for('analyze_alzheimers_mri') }}">
+    <aside class="mri-sidebar">
+        <div class="sidebar-brand">
+            <span class="brand-mark">NS</span>
+            <div>
+                <div class="brand-title">NeuroScan AI</div>
+                <div class="brand-subtitle">Alzheimer detection platform</div>
+            </div>
+        </div>
+
+        <div class="status-pill">
+            <span class="status-dot"></span>
+            Model ready
+        </div>
+
+        <section class="sidebar-section">
+            <h2>Approach</h2>
+            <p>Transfer learning model with Grad-CAM and LIME explainability for 224 x 224 axial MRI images.</p>
+        </section>
+
+        <section class="sidebar-section">
+            <h2>Classes</h2>
+            <ul class="class-list">
+                <li><span class="swatch non"></span>Non-Demented</li>
+                <li><span class="swatch very-mild"></span>Very Mild Demented</li>
+                <li><span class="swatch mild"></span>Mild Demented</li>
+                <li><span class="swatch moderate"></span>Moderate Demented</li>
+            </ul>
+        </section>
+
+        <section class="sidebar-section settings-panel">
+            <h2>XAI Settings</h2>
+            <label for="limeSamples">
+                <span>LIME samples</span>
+                <output id="limeSamplesValue">300</output>
+            </label>
+            <input id="limeSamples" type="range" min="100" max="500" value="300" step="50">
+
+            <label for="limeFeatures">
+                <span>LIME features</span>
+                <output id="limeFeaturesValue">5</output>
+            </label>
+            <input id="limeFeatures" type="range" min="3" max="10" value="5" step="1">
+
+            <label class="checkbox-row" for="includeLime">
+                <input id="includeLime" type="checkbox" checked>
+                <span>Generate LIME</span>
+            </label>
+        </section>
+
+        <p class="sidebar-footnote">Academic and research use only.</p>
+    </aside>
+
+    <section class="mri-workspace">
+        <header class="mri-hero">
+            <div>
+                <p class="eyebrow">Alzheimer's MRI Analysis</p>
+                <h1>Explainable brain scan interpretation</h1>
+                <p class="hero-copy">Upload one MRI image and review the model prediction with visual evidence maps.</p>
+            </div>
+            <div class="hero-badge">
+                <span class="status-dot"></span>
+                MRI model online
+            </div>
+        </header>
+
+        <div class="analysis-grid">
+            <form id="mriAnalysisForm" class="upload-panel">
+                <div class="panel-heading">
+                    <span class="step-label">Step 01</span>
+                    <h2>Upload Brain MRI</h2>
+                </div>
+
+                <label id="dropZone" class="drop-zone" for="mriFile">
+                    <input id="mriFile" name="mri_file" type="file" accept="image/png,image/jpeg" hidden>
+                    <span class="upload-icon">+</span>
+                    <strong>Choose or drop an MRI image</strong>
+                    <small>JPG or PNG, clear centered grayscale slices work best.</small>
+                </label>
+
+                <figure id="previewWrap" class="preview-wrap" hidden>
+                    <img id="previewImage" alt="Uploaded MRI preview">
+                    <figcaption id="selectedFileName"></figcaption>
+                </figure>
+
+                <button id="analyzeButton" class="primary-action" type="submit" disabled>Run Analysis</button>
+                <p class="medical-note">AI output is not a clinical diagnosis and must be reviewed by qualified professionals.</p>
+            </form>
+
+            <section class="result-panel" aria-live="polite">
+                <div id="idleState" class="idle-state">
+                    <span class="idle-mark">MRI</span>
+                    <h2>Results will appear here</h2>
+                    <p>Select a brain MRI and run analysis to view prediction, probabilities, Grad-CAM, and LIME.</p>
+                </div>
+
+                <div id="loadingState" class="loading-state" hidden>
+                    <div class="loader"></div>
+                    <h2>Analyzing scan</h2>
+                    <p>Generating prediction and explainability outputs.</p>
+                </div>
+
+                <div id="errorState" class="error-state" hidden></div>
+
+                <div id="resultState" class="result-state" hidden>
+                    <div class="panel-heading">
+                        <span class="step-label">Step 02</span>
+                        <h2>Prediction Summary</h2>
+                    </div>
+
+                    <div id="predictionBanner" class="prediction-banner">
+                        <h3 id="predictedClass"></h3>
+                        <p id="predictedDescription"></p>
+                    </div>
+
+                    <div class="metrics-row">
+                        <div class="metric-tile">
+                            <span>Confidence</span>
+                            <strong id="confidenceValue"></strong>
+                        </div>
+                        <div class="metric-tile">
+                            <span>Stage Index</span>
+                            <strong id="stageValue"></strong>
+                        </div>
+                        <div class="metric-tile">
+                            <span>Severity</span>
+                            <strong id="severityValue"></strong>
+                        </div>
+                    </div>
+
+                    <details class="probabilities-box" open>
+                        <summary>Full Class Probabilities</summary>
+                        <div id="probabilitiesList" class="probabilities-list"></div>
+                    </details>
+
+                    <div class="panel-heading xai-heading">
+                        <span class="step-label">Step 03</span>
+                        <h2>Explainable AI Visualizations</h2>
+                    </div>
+
+                    <div class="tab-controls" role="tablist" aria-label="XAI result tabs">
+                        <button type="button" class="tab-button active" data-tab="gradcam">Grad-CAM Heatmap</button>
+                        <button type="button" class="tab-button" data-tab="lime">LIME Explanation</button>
+                    </div>
+
+                    <div class="xai-image-wrap" data-panel="gradcam">
+                        <img id="gradcamImage" alt="Grad-CAM heatmap result">
+                        <p>Warmer regions indicate areas most influential to the model prediction.</p>
+                    </div>
+
+                    <div class="xai-image-wrap" data-panel="lime" hidden>
+                        <img id="limeImage" alt="LIME explanation result">
+                        <p>Highlighted superpixels contributed most to the predicted class.</p>
+                        <p id="limeWarning" class="lime-warning" hidden></p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </section>
+</main>
+
+<script src="{{ url_for('static', filename='js/alzheimers_mri.js') }}"></script>
+</body>
+</html>
