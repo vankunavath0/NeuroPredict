@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # NeuroPredict – AI-Powered Neurodegenerative Risk Assessment Platform
 
 ## Overview
@@ -927,3 +928,6 @@ Users are solely responsible for ensuring compliance with all applicable laws an
 **Last Updated**: December 27, 2025
 #   N e u r o P r e d i c t  
  
+=======
+
+>>>>>>> 97d9692f23877b3326350ebbc36c8f02bbc7a2d9
