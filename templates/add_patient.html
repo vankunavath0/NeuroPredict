@@ -1,73 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Add Patient - NeuroSense</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Patient - NeuroPredict</title>
     <style>
-        body { font-family: Arial; background:#f6f7fb; }
-        .container {
-            max-width:500px;
-            margin:60px auto;
-            background:white;
-            padding:30px;
-            border-radius:12px;
-            box-shadow:0 2px 8px rgba(0,0,0,0.1);
-        }
-        h2 { margin-bottom:20px; }
-        label { display:block; margin-top:15px; font-weight:600; }
-        input, select {
-            width:100%;
-            padding:12px;
-            border-radius:8px;
-            border:1px solid #ccc;
-            margin-top:6px;
-        }
-        button {
-            margin-top:25px;
-            width:100%;
-            padding:12px;
-            background:#1a73e8;
-            color:white;
-            border:none;
-            border-radius:10px;
-            font-size:15px;
-            cursor:pointer;
-        }
+        :root { --bg:#f5f7fb; --surface:#fff; --line:#e5e7eb; --text:#111827; --muted:#6b7280; --primary:#2563eb; --danger:#dc2626; --shadow:0 18px 45px rgba(15,23,42,.08); }
+        * { box-sizing:border-box; }
+        body { margin:0; font-family:Arial,sans-serif; color:var(--text); background:var(--bg); }
+        .container { width:min(640px,calc(100% - 32px)); margin:0 auto; padding:44px 0; }
+        .card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:28px; box-shadow:var(--shadow); }
+        .back-link { display:inline-flex; margin-bottom:18px; color:var(--primary); text-decoration:none; font-weight:900; }
+        h1 { margin:0; font-size:30px; }
+        .subtitle { margin:8px 0 24px; color:var(--muted); }
+        .form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+        .full { grid-column:1 / -1; }
+        label { display:block; margin-bottom:7px; color:#374151; font-size:14px; font-weight:800; }
+        input,select { width:100%; min-height:44px; padding:11px 12px; border:1px solid #d1d5db; border-radius:8px; background:#fff; font-size:15px; transition:border-color .2s ease,box-shadow .2s ease; }
+        input:focus,select:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 4px rgba(37,99,235,.12); }
+        button { width:100%; min-height:46px; margin-top:22px; border:0; border-radius:8px; color:#fff; background:var(--primary); font-size:15px; font-weight:900; cursor:pointer; transition:transform .2s ease,box-shadow .2s ease; }
+        button:hover { transform:translateY(-2px); box-shadow:0 12px 24px rgba(37,99,235,.22); }
+        @media (max-width:640px) { .form-grid{grid-template-columns:1fr;} .full{grid-column:auto;} }
     </style>
 </head>
 <body>
+<main class="container">
+    <a href="{{ url_for('doctor_patients') }}" class="back-link">Back to Patient Management</a>
+    <section class="card">
+        <h1>Add New Patient</h1>
+        <p class="subtitle">Create a patient account and add them to your roster.</p>
 
-<div class="container">
-    <h2>Add New Patient</h2>
+        <form method="POST" action="{{ url_for('add_patient') }}">
+            <div class="form-grid">
+                <div class="full">
+                    <label for="full_name">Full Name</label>
+                    <input id="full_name" type="text" name="full_name" required>
+                </div>
+                <div>
+                    <label for="email">Email</label>
+                    <input id="email" type="email" name="email" required>
+                </div>
+                <div>
+                    <label for="phone">Phone</label>
+                    <input id="phone" type="text" name="phone">
+                </div>
+                <div>
+                    <label for="age">Age</label>
+                    <input id="age" type="number" name="age" min="1" max="120">
+                </div>
+                <div>
+                    <label for="gender">Gender</label>
+                    <select id="gender" name="gender">
+                        <option value="">Select</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="blood_type">Blood Group</label>
+                    <input id="blood_type" type="text" name="blood_type">
+                </div>
+                <div>
+                    <label for="password">Temporary Password</label>
+                    <input id="password" type="text" name="password" value="123" required>
+                </div>
+            </div>
 
-    <form method="POST" action="doctor_patients_add">
-        <label>Full Name</label>
-        <input type="text" name="full_name" required>
-
-        <label>Email</label>
-        <input type="email" name="email" required>
-
-        <label>Phone</label>
-        <input type="text" name="phone">
-
-        <label>Age</label>
-        <input type="number" name="age">
-
-        <label>Gender</label>
-        <select name="gender">
-            <option value="">Select</option>
-            <option>Male</option>
-            <option>Female</option>
-        </select>
-
-        <label>Blood Group</label>
-        <input type="text" name="blood_type">
-
-        <label>Password</label>
-        <input type="text" name="password" value="123" required>
-
-        <button type="submit">Save Patient</button>
-    </form>
-</div>
-
+            <button type="submit">Save Patient</button>
+        </form>
+    </section>
+</main>
 </body>
 </html>

@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Neuro Assessment</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>NeuroPredict Assessment</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
 <div class="navbar">
-    <a href="/">NeuroApp</a>
+    <a href="/">NeuroPredict</a>
 
     {% if session.patient_id %}
       <a href="/dashboard">Dashboard</a>

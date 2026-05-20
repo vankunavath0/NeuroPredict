@@ -1,162 +1,242 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Interventions - NeuroSense</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interventions - NeuroPredict</title>
     <style>
-        body { margin:0; background:#f6f7fb; font-family:Arial; }
-
+        :root {
+            --bg: #f5f7fb;
+            --surface: #ffffff;
+            --line: #e5e7eb;
+            --text: #111827;
+            --muted: #6b7280;
+            --primary: #2563eb;
+            --danger: #dc2626;
+            --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            color: var(--text);
+            background: var(--bg);
+        }
         .navbar {
-            display:flex; justify-content:space-between; align-items:center;
-            padding:15px 30px; background:white;
-            box-shadow:0 2px 8px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 22px;
+            padding: 14px 32px;
+            background: rgba(255, 255, 255, 0.96);
+            border-bottom: 1px solid var(--line);
+            box-shadow: 0 2px 14px rgba(15, 23, 42, 0.05);
         }
-        .nav-left { display:flex; align-items:center; gap:10px; }
-        .nav-logo { width:35px; }
-        .nav-title { font-size:22px; font-weight:bold; }
-
+        .nav-left { display: flex; align-items: center; gap: 10px; }
+        .nav-logo { width: 36px; height: 36px; object-fit: contain; }
+        .nav-title { font-size: 22px; font-weight: 800; }
+        .nav-menu { display: flex; align-items: center; justify-content: flex-end; gap: 18px; flex-wrap: wrap; }
         .nav-menu a {
-            margin:0 15px; text-decoration:none;
-            color:#333; font-weight:500;
+            color: #4b5563;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            padding: 8px 0;
+            border-bottom: 2px solid transparent;
+            transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
         }
-        .nav-menu a.active {
-            color:#1a73e8;
-            border-bottom:2px solid #1a73e8;
-            padding-bottom:5px;
+        .nav-menu a:hover,
+        .nav-menu a.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .nav-menu a.logout { color: var(--danger); padding: 8px 12px; border-radius: 8px; }
+        .nav-menu a.logout:hover {
+            color: #fff;
+            border-bottom-color: transparent;
+            background: var(--danger);
+            box-shadow: 0 10px 24px rgba(220, 38, 38, 0.25);
         }
 
-        .container { padding:40px 60px; }
-
-        .title { font-size:28px; font-weight:bold; }
-        .subtitle { color:#777; margin-bottom:25px; }
-
+        .page-shell {
+            width: min(1220px, calc(100% - 40px));
+            min-height: calc(100vh - 65px);
+            margin: 0 auto;
+            padding: 34px 0 48px;
+            display: flex;
+            flex-direction: column;
+        }
+        .title { margin: 0; font-size: clamp(26px, 3vw, 34px); line-height: 1.12; }
+        .subtitle { margin: 8px 0 24px; color: var(--muted); }
+        .content-grid {
+            display: grid;
+            grid-template-columns: minmax(320px, 0.85fr) minmax(0, 1fr);
+            gap: 22px;
+            align-items: stretch;
+            flex: 1;
+        }
         .card {
-            background:white;
-            padding:30px;
-            border-radius:12px;
-            box-shadow:0 2px 8px rgba(0,0,0,0.07);
-            max-width:800px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow);
         }
-
+        .form-card { min-height: 100%; }
+        .panel-title { margin: 0 0 16px; font-size: 20px; }
         label {
-            font-weight:600;
-            display:block;
-            margin-top:18px;
-            margin-bottom:6px;
+            display: block;
+            margin: 16px 0 7px;
+            color: #374151;
+            font-size: 14px;
+            font-weight: 800;
         }
-
         input, select, textarea {
-            width:100%;
-            padding:12px;
-            border-radius:8px;
-            border:1px solid #ccc;
-            font-size:14px;
+            width: 100%;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 12px 13px;
+            background: #fff;
+            font-size: 15px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
-
-        textarea {
-            resize:none;
-            height:120px;
+        textarea { min-height: 150px; resize: vertical; }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
         }
-
         .btn {
-            margin-top:25px;
-            background:#1a73e8;
-            color:white;
-            padding:12px 22px;
-            border:none;
-            border-radius:10px;
-            cursor:pointer;
-            font-size:15px;
+            width: 100%;
+            min-height: 46px;
+            margin-top: 22px;
+            border: 0;
+            border-radius: 8px;
+            color: #fff;
+            background: var(--primary);
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .btn:hover { background:#1558c0; }
-
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.22);
+        }
         .note {
-            margin-top:20px;
-            font-size:14px;
-            color:#666;
+            margin: 18px 0 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .intervention-list { display: grid; gap: 14px; }
+        .intervention-item {
+            border: 1px solid #eef2f7;
+            border-radius: 10px;
+            padding: 16px;
+            background: #fbfdff;
+        }
+        .intervention-item strong { display: block; margin-bottom: 5px; }
+        .meta { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+        .description { margin: 0; color: #374151; line-height: 1.55; }
+        .empty {
+            padding: 34px;
+            color: var(--muted);
+            text-align: center;
+            border: 1px dashed var(--line);
+            border-radius: 10px;
+            background: #f9fafb;
+        }
+
+        @media (max-width: 900px) {
+            .content-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 720px) {
+            .navbar { align-items: flex-start; flex-direction: column; padding: 14px 20px; }
+            .nav-menu { justify-content: flex-start; gap: 12px 16px; }
+            .page-shell { width: min(100% - 28px, 1220px); padding-top: 24px; }
         }
     </style>
 </head>
-
 <body>
-
-<!-- NAVBAR -->
 <div class="navbar">
     <div class="nav-left">
-        <img src="{{ url_for('static', filename='logo.png') }}" class="nav-logo">
-        <span class="nav-title">NeuroSense</span>
+        <img src="{{ url_for('static', filename='logo.png') }}" class="nav-logo" alt="NeuroPredict">
+        <span class="nav-title">NeuroPredict</span>
     </div>
 
     <div class="nav-menu">
-        <a href="doctor_dashboard">Dashboard</a>
-        <a href="doctor_patients">Patient Management</a>
-        <a href="doctor_diagnostics_dash">Diagnostics</a>
+        <a href="{{ url_for('doctor_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('doctor_patients') }}">Patient Management</a>
         <a href="{{ url_for('alzheimers_analysis') }}">MRI Analysis</a>
-        <a href="doctor_interventions" class="active">Interventions</a>
-        <a href="logout" style="color:red;">Logout</a>
+        <a href="{{ url_for('doctor_interventions') }}" class="active">Interventions</a>
+        <a href="{{ url_for('logout') }}" class="logout">Logout</a>
     </div>
 </div>
 
-<!-- CONTENT -->
-<div class="container">
+<main class="page-shell">
+    <h1 class="title">Interventions</h1>
+    <p class="subtitle">Create clinical, lifestyle, therapy, or dietary recommendations for patient timelines.</p>
 
-    <div class="title">Interventions</div>
-    <div class="subtitle">
-        Recommend clinical, lifestyle, or cognitive interventions
-    </div>
+    <section class="content-grid">
+        <div class="card form-card">
+            <h2 class="panel-title">New Intervention</h2>
+            <form method="POST" action="{{ url_for('doctor_interventions') }}">
+                <label for="patient_id">Patient</label>
+                <select id="patient_id" name="patient_id" required>
+                    <option value="">Select Patient</option>
+                    {% for p in patients %}
+                        <option value="{{ p.id }}">{{ p.full_name }}</option>
+                    {% endfor %}
+                </select>
 
-    <div class="card">
+                <label for="diagnosis">Diagnosis</label>
+                <select id="diagnosis" name="diagnosis" required>
+                    <option value="">Select Diagnosis</option>
+                    <option>Alzheimer's Disease</option>
+                    <option>Parkinson's Disease</option>
+                    <option>Dementia</option>
+                    <option>Mild Cognitive Impairment</option>
+                </select>
 
-        <form method="POST" action="doctor_interventions">
+                <label for="intervention_type">Intervention Type</label>
+                <select id="intervention_type" name="intervention_type" required>
+                    <option value="">Select Type</option>
+                    <option>Medication</option>
+                    <option>Cognitive Therapy</option>
+                    <option>Lifestyle Modification</option>
+                    <option>Physical Therapy</option>
+                    <option>Dietary Plan</option>
+                </select>
 
-            <!-- PATIENT -->
-            <label>Patient</label>
-            <select name="patient_id" required>
-                <option value="">Select Patient</option>
-                {% for p in patients %}
-                    <option value="{{ p.id }}">{{ p.full_name }}</option>
-                {% endfor %}
-            </select>
+                <label for="details">Intervention Details</label>
+                <textarea id="details" name="details" placeholder="Describe the recommended intervention..." required></textarea>
 
-            <!-- DIAGNOSIS -->
-            <label>Diagnosis</label>
-            <select name="diagnosis" required>
-                <option value="">Select Diagnosis</option>
-                <option>Alzheimer's Disease</option>
-                <option>Parkinson's Disease</option>
-                <option>Dementia</option>
-                <option>Mild Cognitive Impairment</option>
-            </select>
-
-            <!-- INTERVENTION TYPE -->
-            <label>Intervention Type</label>
-            <select name="intervention_type" required>
-                <option value="">Select Type</option>
-                <option>Medication</option>
-                <option>Cognitive Therapy</option>
-                <option>Lifestyle Modification</option>
-                <option>Physical Therapy</option>
-                <option>Dietary Plan</option>
-            </select>
-
-            <!-- DETAILS -->
-            <label>Intervention Details</label>
-            <textarea name="details" placeholder="Describe the recommended intervention..." required></textarea>
-
-            <button type="submit" class="btn">
-                Save Intervention
-            </button>
-
-        </form>
-
-        <div class="note">
-            Interventions will be visible to patients and added to their Health Timeline.
+                <button type="submit" class="btn">Save Intervention</button>
+            </form>
+            <p class="note">Saved interventions are added to the patient's Health Timeline.</p>
         </div>
 
-    </div>
-
-</div>
-
+        <div class="card">
+            <h2 class="panel-title">Recent Interventions</h2>
+            {% if interventions %}
+                <div class="intervention-list">
+                    {% for item in interventions %}
+                        <article class="intervention-item">
+                            <strong>{{ item.title }}</strong>
+                            <div class="meta">
+                                {{ item.full_name }} | {{ item.disease }} | {{ item.created_at.strftime('%d %b %Y') if item.created_at else "Date unavailable" }}
+                            </div>
+                            <p class="description">{{ item.description }}</p>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty">No interventions have been saved yet.</div>
+            {% endif %}
+        </div>
+    </section>
+</main>
 </body>
 </html>

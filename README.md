@@ -1,10 +1,10 @@
-# NeuroSense – AI-Powered Neurodegenerative Risk Assessment Platform
+# NeuroPredict – AI-Powered Neurodegenerative Risk Assessment Platform
 
 ## Overview
 
-**NeuroSense** is a clinical decision support system designed for early risk assessment and management of neurodegenerative diseases. The platform integrates multimodal clinical data, cognitive assessment tools, biomarkers, and machine learning models to provide physicians and patients with actionable risk predictions for **Alzheimer's Disease**, **Parkinson's Disease**, and **Dementia**.
+**NeuroPredict** is a clinical decision support system designed for early risk assessment and management of neurodegenerative diseases. The platform integrates multimodal clinical data, cognitive assessment tools, biomarkers, and machine learning models to provide physicians and patients with actionable risk predictions for **Alzheimer's Disease**, **Parkinson's Disease**, and **Dementia**.
 
-Built as a comprehensive web-based application, NeuroSense bridges clinical expertise with computational intelligence, enabling:
+Built as a comprehensive web-based application, NeuroPredict bridges clinical expertise with computational intelligence, enabling:
 - **Objective risk quantification** across multiple neurodegenerative conditions using ensemble ML models
 - **Longitudinal patient monitoring** with timeline-based event tracking and historical analysis
 - **Clinician-driven diagnostic workflows** with multimodal clinical feature integration
@@ -13,7 +13,7 @@ Built as a comprehensive web-based application, NeuroSense bridges clinical expe
 
 The system is designed for deployment in clinical practices, research institutions, and telemedicine platforms, supporting both diagnostic accuracy and preventive care strategies.
 
-**Live Application**: [NeuroSense](https://urbanupscaleproperties.com/neurosense/)
+**Live Application**: [NeuroPredict](https://urbanupscaleproperties.com/NeuroPredict/)
 
 ---
 
@@ -484,8 +484,8 @@ Patient Sees in Timeline
 
 #### 1. Clone Repository
 ```bash
-git clone https://github.com/divyam5858/NeuroSense.git
-cd NeuroSense
+git clone https://github.com/divyam5858/NeuroPredict.git
+cd NeuroPredict
 ```
 
 #### 2. Create Virtual Environment
@@ -515,18 +515,18 @@ ReportLab==4.0.0
 
 Create database and user:
 ```sql
-CREATE DATABASE hallibaz_neurosense;
+CREATE DATABASE hallibaz_NeuroPredict;
 
-CREATE USER 'hallibaz_neurosense'@'localhost' IDENTIFIED BY 'neurosense@123';
+CREATE USER 'hallibaz_NeuroPredict'@'localhost' IDENTIFIED BY 'NeuroPredict@123';
 
-GRANT ALL PRIVILEGES ON hallibaz_neurosense.* TO 'hallibaz_neurosense'@'localhost';
+GRANT ALL PRIVILEGES ON hallibaz_NeuroPredict.* TO 'hallibaz_NeuroPredict'@'localhost';
 
 FLUSH PRIVILEGES;
 ```
 
 Create required tables:
 ```sql
-USE hallibaz_neurosense;
+USE hallibaz_NeuroPredict;
 
 CREATE TABLE patients (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -629,9 +629,9 @@ mkdir -p uploads/mri
 Update database credentials in `app.py`:
 ```python
 app.config["MYSQL_HOST"] = "localhost"
-app.config["MYSQL_USER"] = "hallibaz_neurosense"
-app.config["MYSQL_PASSWORD"] = "neurosense@123"
-app.config["MYSQL_DB"] = "hallibaz_neurosense"
+app.config["MYSQL_USER"] = "hallibaz_NeuroPredict"
+app.config["MYSQL_PASSWORD"] = "NeuroPredict@123"
+app.config["MYSQL_DB"] = "hallibaz_NeuroPredict"
 app.secret_key = "SECRET123"  # Change for production
 ```
 
@@ -705,7 +705,7 @@ Internet
 ## Project Structure
 
 ```
-NeuroSense/
+NeuroPredict/
 │
 ├── app.py                           # Main Flask application (1038 lines)
 │                                    # 25+ routes for auth, dashboards, assessments
@@ -810,7 +810,7 @@ NeuroSense/
 **Benefits**: Convenient self-service access, objective health metrics, portable health records, provider continuity
 
 ### 3. Research Institution – Algorithm Validation
-**Scenario**: A neuroscience research center validates NeuroSense algorithms.
+**Scenario**: A neuroscience research center validates NeuroPredict algorithms.
 
 **Workflow**:
 1. Create study-specific doctor accounts
@@ -824,7 +824,7 @@ NeuroSense/
 **Benefits**: Standardized data collection, interoperable data structure, regulatory compliance, evidence generation
 
 ### 4. Telemedicine – Remote Assessment Integration
-**Scenario**: A telemedicine provider integrates NeuroSense into routine virtual care.
+**Scenario**: A telemedicine provider integrates NeuroPredict into routine virtual care.
 
 **Workflow**:
 1. Patient completes assessment during telehealth appointment
@@ -885,11 +885,11 @@ NeuroSense/
 
 **Academic & Educational Use**
 
-NeuroSense is provided for academic research, educational purposes, and clinical evaluation as a research prototype.
+NeuroPredict is provided for academic research, educational purposes, and clinical evaluation as a research prototype.
 
 **Terms**:
 - Non-commercial use only without express written permission
-- Attribution to NeuroSense development team required in publications
+- Attribution to NeuroPredict development team required in publications
 - No commercial redistribution or derivative commercialization
 - Research institutions may use with project approval
 - Consult development team for licensing beyond academic scope
@@ -908,7 +908,7 @@ Users are solely responsible for ensuring compliance with all applicable laws an
 
 ## Acknowledgments
 
-**Development Team**: NeuroSense Development Project
+**Development Team**: NeuroPredict Development Project
 
 **Technologies**: Built with Flask, XGBoost, LightGBM, TensorFlow, NumPy, scikit-learn, and MySQL
 
@@ -918,9 +918,9 @@ Users are solely responsible for ensuring compliance with all applicable laws an
 
 ---
 
-**Repository**: [NeuroSense](https://github.com/divyam5858/NeuroSense)
+**Repository**: [NeuroPredict](https://github.com/divyam5858/NeuroPredict)
 
-**Live Application**: [NeuroSense](https://urbanupscaleproperties.com/neurosense/)
+**Live Application**: [NeuroPredict](https://urbanupscaleproperties.com/NeuroPredict/)
 
 **Version**: 1.0.0
 

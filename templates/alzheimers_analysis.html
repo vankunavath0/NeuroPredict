@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alzheimer MRI Analysis - NeuroSense</title>
+    <title>Alzheimer MRI Analysis - NeuroPredict</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/alzheimers_mri.css') }}">
 </head>
 <body class="mri-page">
 
-<header class="neurosense-nav">
+<header class="neuropredict-nav">
     <div class="nav-left">
-        <img src="{{ url_for('static', filename='logo.png') }}" class="nav-logo" alt="NeuroSense">
-        <span class="nav-title">NeuroSense</span>
+        <img src="{{ url_for('static', filename='logo.png') }}" class="nav-logo" alt="NeuroPredict">
+        <span class="nav-title">NeuroPredict</span>
     </div>
 
     <nav class="nav-menu" aria-label="Doctor navigation">
         <a href="{{ url_for('doctor_dashboard') }}">Dashboard</a>
         <a href="{{ url_for('doctor_patients') }}">Patient Management</a>
-        <a href="{{ url_for('doctor_diagnostics_page') }}">Diagnostics</a>
         <a href="{{ url_for('alzheimers_analysis') }}" class="active">MRI Analysis</a>
         <a href="{{ url_for('doctor_interventions') }}">Interventions</a>
         <a href="{{ url_for('logout') }}" class="logout">Logout</a>
@@ -26,14 +25,6 @@
 
 <main class="mri-shell" data-analyze-url="{{ url_for('analyze_alzheimers_mri') }}">
     <aside class="mri-sidebar">
-        <div class="sidebar-brand">
-            <span class="brand-mark">NS</span>
-            <div>
-                <div class="brand-title">NeuroScan AI</div>
-                <div class="brand-subtitle">Alzheimer detection platform</div>
-            </div>
-        </div>
-
         <div class="status-pill">
             <span class="status-dot"></span>
             Model ready

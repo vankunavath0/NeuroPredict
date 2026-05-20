@@ -239,13 +239,19 @@ class MLModelManager:
     # =============================
     # HELPERS
     # =============================
+    def _to_float(self, value, default=0):
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return float(default)
+
     def _extract_features(self, f):
         return np.array([
-            float(f.get("age", 65)),
-            float(f.get("weight", 70)),
-            float(f.get("height", 170)),
+            self._to_float(f.get("age"), 65),
+            self._to_float(f.get("weight"), 70),
+            self._to_float(f.get("height"), 170),
             1 if f.get("gender") == "Male" else 0,
-            float(f.get("alcoholConsumption", 0)),
+            self._to_float(f.get("alcoholConsumption"), 0),
             1 if "Alzheimer's Disease" in f.get("familyHistory", []) else 0,
             1 if "Parkinson's Disease" in f.get("familyHistory", []) else 0,
             1 if "Dementia" in f.get("familyHistory", []) else 0,
@@ -256,7 +262,7 @@ class MLModelManager:
 
     def _top_factors(self, f, s):
         factors = []
-        if f.get("age", 0) >= 70: factors.append(["Age", 90])
+        if self._to_float(f.get("age"), 0) >= 70: factors.append(["Age", 90])
         if f.get("memoryComplaints") in ["moderate", "severe"]: factors.append(["Memory", 80])
         if len(f.get("neurologicalSymptoms", [])) > 1: factors.append(["Neuro Symptoms", 85])
         return factors[:5]
@@ -273,7 +279,7 @@ class MLModelManager:
 
     def _fallback_score(self, f):
         score = 0
-        if f.get("age", 0) >= 70: score += 30
+        if self._to_float(f.get("age"), 0) >= 70: score += 30
         if f.get("memoryComplaints") in ["moderate", "severe"]: score += 25
         score += len(f.get("neurologicalSymptoms", [])) * 5
         return score

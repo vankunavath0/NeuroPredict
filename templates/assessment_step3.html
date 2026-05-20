@@ -1,296 +1,146 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <title>Lifestyle & Behavioral Factors - NeuroSense</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lifestyle & Behavioral Factors - NeuroPredict</title>
     <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f6f7fb;
-        }
-
-        /* NAVBAR */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 40px;
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .nav-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .nav-logo {
-            width: 35px;
-        }
-
-        .nav-title {
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        .nav-menu {
-            display: flex;
-            gap: 30px;
-        }
-
-        .nav-menu a {
-            text-decoration: none;
-            color: #4b5563;
-            font-weight: 500;
-            padding-bottom: 6px;
-        }
-
-        .nav-menu a.active {
-            color: #2563eb;
-            border-bottom: 3px solid #2563eb;
-        }
-
-        /* PAGE LAYOUT */
-        .container {
-            padding: 40px 60px;
-            max-width: 1100px;
-            margin: auto;
-        }
-
-        .title {
-            font-size: 32px;
-            font-weight: bold;
-        }
-
-        .page-number {
-            color: #6b7280;
-            margin-bottom: 25px;
-        }
-
-        /* PROGRESS BAR */
-        .progress {
-            width: 100%;
-            height: 6px;
-            background: #e5e7eb;
-            border-radius: 10px;
-            margin: 30px 0;
-        }
-
-        .progress-fill {
-            width: 75%;
-            height: 100%;
-            background: #1d9bf0;
-            border-radius: 10px;
-        }
-
-        /* SECTION BOX */
-        .section-box {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            border: 1px solid #e5e7eb;
-            margin-bottom: 40px;
-        }
-
-        .section-header {
-            font-size: 22px;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-        .section-sub {
-            color: #6b7280;
-            margin-bottom: 25px;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-
-        .form-group {
-            flex: 1;
-        }
-
-        label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        select, input[type=number], input[type=range] {
-            width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid #d1d5db;
-            margin-top: 5px;
-        }
-
-        /* BUTTONS */
-        .btn-row {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-        }
-
-        .btn-back {
-            padding: 12px 30px;
-            background: #e5e7eb;
-            border-radius: 10px;
-            border: none;
-            cursor: pointer;
-            font-size: 15px;
-        }
-
-        .btn-next {
-            padding: 12px 35px;
-            background: #2563eb;
-            color: white;
-            border-radius: 10px;
-            border: none;
-            cursor: pointer;
-            font-size: 15px;
-            text-decoration: none;
-        }
-
-        .btn-next:hover {
-            background: #1e4ed8;
-        }
+        :root { --bg:#f5f7fb; --surface:#fff; --line:#e5e7eb; --text:#111827; --muted:#6b7280; --primary:#2563eb; --danger:#dc2626; --shadow:0 18px 45px rgba(15,23,42,.08); }
+        * { box-sizing:border-box; }
+        body { margin:0; font-family:Arial,sans-serif; color:var(--text); background:var(--bg); }
+        .navbar { display:flex; justify-content:space-between; align-items:center; gap:22px; padding:14px 32px; background:#fff; border-bottom:1px solid var(--line); }
+        .nav-left { display:flex; align-items:center; gap:10px; }
+        .nav-logo { width:36px; height:36px; object-fit:contain; }
+        .nav-title { font-size:22px; font-weight:900; }
+        .nav-menu { display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+        .nav-menu a { color:#4b5563; text-decoration:none; font-weight:700; font-size:14px; padding:8px 0; border-bottom:2px solid transparent; transition:color .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease; }
+        .nav-menu a.active,.nav-menu a:hover { color:var(--primary); border-bottom-color:var(--primary); }
+        .nav-menu a.logout { color:var(--danger); padding:8px 12px; border-radius:8px; }
+        .nav-menu a.logout:hover { color:#fff; border-bottom-color:transparent; background:var(--danger); box-shadow:0 10px 24px rgba(220,38,38,.25); }
+        .container { width:min(1100px,calc(100% - 40px)); margin:0 auto; padding:34px 0 48px; }
+        .title { margin:0; font-size:clamp(28px,4vw,36px); line-height:1.1; }
+        .page-number { margin:8px 0 24px; color:var(--muted); }
+        .progress { width:100%; height:8px; background:#e5e7eb; border-radius:999px; margin-bottom:24px; overflow:hidden; }
+        .progress-fill { width:75%; height:100%; background:var(--primary); border-radius:inherit; }
+        .section-box { background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:26px; box-shadow:var(--shadow); }
+        .section-header { margin:0; font-size:22px; }
+        .section-sub { margin:8px 0 24px; color:var(--muted); }
+        .form-row { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; margin-bottom:20px; }
+        .form-group { min-width:0; }
+        label { display:block; margin-bottom:7px; color:#374151; font-size:14px; font-weight:800; }
+        input, select { width:100%; min-height:44px; padding:11px 12px; border:1px solid #d1d5db; border-radius:8px; background:#fff; font-size:15px; transition:border-color .2s ease,box-shadow .2s ease; }
+        input:focus,select:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 4px rgba(37,99,235,.12); }
+        input[type=range] { padding:0; accent-color:var(--primary); }
+        .slider-value { color:var(--primary); font-weight:900; }
+        .btn-row { display:flex; justify-content:space-between; gap:14px; margin-top:24px; }
+        .nav-btn { min-width:130px; min-height:46px; border:0; border-radius:8px; font-size:15px; font-weight:900; cursor:pointer; transition:transform .2s ease,box-shadow .2s ease,background .2s ease; }
+        .btn-back { background:#e5e7eb; color:#111827; }
+        .btn-next { background:var(--primary); color:#fff; }
+        .nav-btn:hover { transform:translateY(-2px); box-shadow:0 12px 24px rgba(15,23,42,.12); }
+        .btn-next:hover { background:#1d4ed8; box-shadow:0 12px 24px rgba(37,99,235,.22); }
+        @media (max-width:760px) { .navbar{align-items:flex-start; flex-direction:column; padding:14px 20px;} .container{width:min(100% - 28px,1100px); padding-top:24px;} .form-row{grid-template-columns:1fr;} .btn-row{flex-direction:column-reverse;} .nav-btn{width:100%;} }
     </style>
 </head>
-
 <body>
-
-    
-    <!-- NAVBAR -->
-    <div class="navbar">
+<div class="navbar">
     <div class="nav-left">
-        <img src="{{ url_for('static', filename='logo.png') }}" class="nav-logo">
-        <span class="nav-title">NeuroSense</span>
+        <img src="{{ url_for('static', filename='logo.png') }}" class="nav-logo" alt="NeuroPredict">
+        <span class="nav-title">NeuroPredict</span>
     </div>
-
     <div class="nav-menu">
-        <a href="patient_dashboard" class="active">Dashboard</a>
-        <a href="assessment">Start Assessment</a>
-        <a href="timeline">Health Timeline</a>
-        <a href="ehr">My EHR</a>
-        <a href="patient_profile">My Profile</a>
+        <a href="{{ url_for('patient_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('assessment') }}" class="active">Start Assessment</a>
+        <a href="{{ url_for('patient_timeline') }}">Health Timeline</a>
+        <a href="{{ url_for('patient_ehr') }}">My EHR</a>
+        <a href="{{ url_for('patient_profile') }}">My Profile</a>
+        <a href="{{ url_for('logout') }}" class="logout">Logout</a>
     </div>
 </div>
 
-    <!-- PAGE CONTENT -->
-    <div class="container">
+<main class="container">
+    <h1 class="title">Lifestyle & Behavioral Factors</h1>
+    <div class="page-number">Page 3 of 4</div>
+    <div class="progress"><div class="progress-fill"></div></div>
 
-        <div class="title">Lifestyle & Behavioral Factors</div>
-        <div class="page-number">Page 3 of 4</div>
+    <form method="POST">
+        <section class="section-box">
+            <h2 class="section-header">Lifestyle & Behavioral Information</h2>
+            <p class="section-sub">Daily habits help estimate and contextualize neurological risk.</p>
 
-        <!-- PROGRESS BAR -->
-        <div class="progress">
-            <div class="progress-fill"></div>
-        </div>
-
-        <!-- SECTION -->
-         <form method="POST">
-        <div class="section-box">
-            <div class="section-header">Lifestyle & Behavioral Information</div>
-            <div class="section-sub">Tell us about your daily habits</div>
-
-            <!-- ROW 1 -->
             <div class="form-row">
                 <div class="form-group">
-                    <label>Physical Activity Level</label>
-                    <select name="physicalActivity">
-                        <option>Select</option>
-                         <option value="sedentary">Sedentary</option>
-    <option value="light">Light</option>
-    <option value="moderate">Moderate</option>
-    <option value="active">Active</option>
+                    <label for="physicalActivity">Physical Activity Level</label>
+                    <select id="physicalActivity" name="physicalActivity">
+                        <option value="">Select level</option>
+                        {% for value, label in [("sedentary","Sedentary"),("light","Light"),("moderate","Moderate"),("active","Active")] %}
+                            <option value="{{ value }}" {{ "selected" if form_data.get('physicalActivity') == value else "" }}>{{ label }}</option>
+                        {% endfor %}
                     </select>
                 </div>
-
                 <div class="form-group">
-                    <label>Sleep Quality</label>
-                    <select name="sleepQuality">
-                        <option>Select sleep quality</option>
-                       <option value="poor">Poor</option>
-    <option value="fair">Fair</option>
-    <option value="good">Good</option>
-    <option value="excellent">Excellent</option>
+                    <label for="sleepQuality">Sleep Quality</label>
+                    <select id="sleepQuality" name="sleepQuality">
+                        <option value="">Select sleep quality</option>
+                        {% for value, label in [("poor","Poor"),("fair","Fair"),("good","Good"),("excellent","Excellent")] %}
+                            <option value="{{ value }}" {{ "selected" if form_data.get('sleepQuality') == value else "" }}>{{ label }}</option>
+                        {% endfor %}
                     </select>
                 </div>
             </div>
 
-            <!-- ALCOHOL SLIDER -->
             <div class="form-group">
-                <label>Alcohol Consumption (drinks per week): <span id="alcVal">0</span></label>
-                <input type="range" name="alcoholConsumption" min="0" max="30" value="0" oninput="alcVal.innerText = this.value">
+                <label for="alcoholConsumption">Alcohol Consumption: <span class="slider-value" id="alcVal">{{ form_data.get('alcoholConsumption', 0) }} drinks/week</span></label>
+                <input id="alcoholConsumption" type="range" name="alcoholConsumption" min="0" max="30" value="{{ form_data.get('alcoholConsumption', 0) }}" oninput="alcVal.innerText = this.value + ' drinks/week'">
             </div>
 
-            <!-- ROW 2 -->
             <div class="form-row">
                 <div class="form-group">
-                    <label>Smoking Status</label>
-                    <select name="smokingStatus">
-                        <option>Select status</option>
-                       <option value="never">Never</option>
-    <option value="former">Former</option>
-    <option value="current">Current</option>
+                    <label for="smokingStatus">Smoking Status</label>
+                    <select id="smokingStatus" name="smokingStatus">
+                        <option value="">Select status</option>
+                        {% for value, label in [("never","Never"),("former","Former"),("current","Current")] %}
+                            <option value="{{ value }}" {{ "selected" if form_data.get('smokingStatus') == value else "" }}>{{ label }}</option>
+                        {% endfor %}
                     </select>
                 </div>
-
                 <div class="form-group">
-                    <label>Diet Type</label>
-                    <select name="dietType">
-                        <option>Select diet</option>
-                      <option value="standard">Standard</option>
-    <option value="mediterranean">Mediterranean</option>
-    <option value="vegetarian">Vegetarian</option>
-    <option value="vegan">Vegan</option>
+                    <label for="dietType">Diet Type</label>
+                    <select id="dietType" name="dietType">
+                        <option value="">Select diet</option>
+                        {% for value, label in [("standard","Standard"),("mediterranean","Mediterranean"),("vegetarian","Vegetarian"),("vegan","Vegan")] %}
+                            <option value="{{ value }}" {{ "selected" if form_data.get('dietType') == value else "" }}>{{ label }}</option>
+                        {% endfor %}
                     </select>
                 </div>
             </div>
 
-            <!-- ROW 3 -->
             <div class="form-row">
                 <div class="form-group">
-                    <label>Coffee Consumption</label>
-                    <select name="coffeeConsumption">
-                        <option>Select consumption</option>
-                        <option value="none">None</option>
-    <option value="1-2">1–2 cups/day</option>
-    <option value="3-4">3–4 cups/day</option>
-    <option value="5+">5+ cups/day</option>
+                    <label for="coffeeConsumption">Coffee Consumption</label>
+                    <select id="coffeeConsumption" name="coffeeConsumption">
+                        <option value="">Select consumption</option>
+                        {% for value, label in [("none","None"),("1-2","1-2 cups/day"),("3-4","3-4 cups/day"),("5+","5+ cups/day")] %}
+                            <option value="{{ value }}" {{ "selected" if form_data.get('coffeeConsumption') == value else "" }}>{{ label }}</option>
+                        {% endfor %}
                     </select>
                 </div>
-
                 <div class="form-group">
-                    <label>Social Engagement</label>
-                    <select name="socialEngagement">
-                        <option>Select level</option>
-                        <option value="low">Low</option>
-    <option value="moderate">Moderate</option>
-    <option value="high">High</option>
+                    <label for="socialEngagement">Social Engagement</label>
+                    <select id="socialEngagement" name="socialEngagement">
+                        <option value="">Select level</option>
+                        {% for value, label in [("low","Low"),("moderate","Moderate"),("high","High")] %}
+                            <option value="{{ value }}" {{ "selected" if form_data.get('socialEngagement') == value else "" }}>{{ label }}</option>
+                        {% endfor %}
                     </select>
                 </div>
             </div>
+        </section>
 
-        </div>
-
-        <!-- BUTTONS -->
         <div class="btn-row">
-          <button class="btn-back" formaction="assessment?step=2">← Previous</button>
-  <button class="btn btn-primary mt-3">Next →</button>
-          
+            <button type="submit" name="direction" value="previous" class="nav-btn btn-back">Previous</button>
+            <button type="submit" name="direction" value="next" class="nav-btn btn-next">Next</button>
         </div>
-</form>
-    </div>
-
+    </form>
+</main>
 </body>
 </html>

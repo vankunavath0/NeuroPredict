@@ -1,188 +1,321 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Patient Dashboard - NeuroSense</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard - NeuroPredict</title>
     <style>
-        body { margin:0; font-family:Arial; background:#f8fafc; }
-
-        /* NAVBAR */
+        :root {
+            --bg: #f5f7fb;
+            --surface: #ffffff;
+            --line: #e5e7eb;
+            --text: #111827;
+            --muted: #6b7280;
+            --primary: #2563eb;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: Arial, sans-serif; color: var(--text); background: var(--bg); }
         .navbar {
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            padding:14px 35px;
-            background:white;
-            border-bottom:1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 22px;
+            padding: 14px 32px;
+            background: rgba(255, 255, 255, 0.96);
+            border-bottom: 1px solid var(--line);
+            box-shadow: 0 2px 14px rgba(15, 23, 42, 0.05);
         }
-        .nav-left { display:flex; align-items:center; gap:10px; }
-        .nav-logo { width:35px; }
-        .nav-title { font-size:22px; font-weight:bold; }
-
-        .nav-menu {
-            display:flex;
-            align-items:center;
-        }
-
+        .nav-left { display: flex; align-items: center; gap: 10px; }
+        .nav-logo { width: 36px; height: 36px; object-fit: contain; }
+        .nav-title { font-size: 22px; font-weight: 900; }
+        .nav-menu { display: flex; align-items: center; justify-content: flex-end; gap: 18px; flex-wrap: wrap; }
         .nav-menu a {
-            margin:0 18px;
-            padding-bottom:6px;
-            text-decoration:none;
-            color:#4b5563;
-            font-weight:500;
+            color: #4b5563;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            padding: 8px 0;
+            border-bottom: 2px solid transparent;
+            transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
         }
-        .nav-menu a.active {
-            color:#2563eb;
-            border-bottom:3px solid #2563eb;
-        }
-
-        .nav-menu a.logout {
-            color:#dc2626;
-            font-weight:bold;
-        }
+        .nav-menu a:hover,
+        .nav-menu a.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .nav-menu a.logout { color: var(--danger); padding: 8px 12px; border-radius: 8px; }
         .nav-menu a.logout:hover {
-            border-bottom:3px solid #dc2626;
+            color: #fff;
+            border-bottom-color: transparent;
+            background: var(--danger);
+            box-shadow: 0 10px 24px rgba(220, 38, 38, 0.25);
         }
 
-        /* PAGE LAYOUT */
         .container {
-            padding:40px 55px;
+            width: min(1220px, calc(100% - 40px));
+            margin: 0 auto;
+            padding: 34px 0 48px;
         }
+        .hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 22px;
+            align-items: end;
+            margin-bottom: 24px;
+        }
+        .title { margin: 0; font-size: clamp(28px, 4vw, 38px); line-height: 1.1; }
+        .subtitle { margin: 8px 0 0; color: var(--muted); }
+        .primary-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 0 18px;
+            border-radius: 8px;
+            color: #fff;
+            background: var(--primary);
+            text-decoration: none;
+            font-weight: 900;
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.22);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .primary-link:hover { transform: translateY(-2px); box-shadow: 0 18px 32px rgba(37, 99, 235, 0.28); }
 
-        .title {
-            font-size:32px;
-            font-weight:bold;
-            margin-bottom:8px;
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 24px;
         }
-        .subtitle {
-            color:#6b7280;
-            margin-bottom:25px;
+        .summary-card,
+        .panel,
+        .action-card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
         }
+        .summary-card {
+            min-height: 132px;
+            padding: 20px;
+            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+        }
+        .summary-card:hover {
+            transform: scale(1.025);
+            border-color: rgba(37, 99, 235, 0.38);
+            box-shadow: 0 18px 42px rgba(37, 99, 235, 0.14);
+        }
+        .summary-label { color: var(--muted); font-size: 13px; font-weight: 900; text-transform: uppercase; }
+        .summary-value { margin-top: 12px; font-size: 30px; font-weight: 900; }
+        .summary-note { margin-top: 8px; color: var(--muted); font-size: 13px; line-height: 1.4; }
 
-        .section-title {
-            font-size:22px;
-            font-weight:bold;
-            margin-top:25px;
-            margin-bottom:10px;
+        .content-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+            gap: 22px;
         }
-        .section-sub {
-            color:#6b7280;
-            margin-bottom:20px;
+        .panel { padding: 24px; box-shadow: var(--shadow); }
+        .panel-title { margin: 0 0 16px; font-size: 20px; }
+        .risk-list { display: grid; gap: 14px; }
+        .risk-row {
+            display: grid;
+            grid-template-columns: 130px minmax(0, 1fr) 58px;
+            gap: 12px;
+            align-items: center;
         }
-
+        .risk-name { font-weight: 800; }
+        .risk-track { height: 10px; overflow: hidden; border-radius: 999px; background: #e5e7eb; }
+        .risk-fill { height: 100%; border-radius: inherit; background: var(--primary); }
+        .risk-score { text-align: right; font-weight: 900; }
+        .tip-list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+        .tip-list li {
+            padding: 14px;
+            border: 1px solid #eef2f7;
+            border-radius: 10px;
+            background: #fbfdff;
+            color: #374151;
+            line-height: 1.5;
+        }
+        .activity-item {
+            padding: 14px 0;
+            border-bottom: 1px solid #eef2f7;
+        }
+        .activity-item:last-child { border-bottom: 0; }
+        .activity-item strong { display: block; }
+        .activity-item span { color: var(--muted); font-size: 13px; }
         .quick-actions {
-            display:flex;
-            gap:20px;
-            margin-top:20px;
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+        .action-card {
+            display: grid;
+            place-items: center;
+            min-height: 132px;
+            padding: 18px;
+            color: var(--text);
+            text-align: center;
+            text-decoration: none;
+            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+        }
+        .action-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(37, 99, 235, 0.38);
+            box-shadow: 0 18px 42px rgba(37, 99, 235, 0.14);
+        }
+        .action-card img { width: 40px; height: 40px; object-fit: contain; margin-bottom: 10px; }
+        .qa-title { font-size: 16px; font-weight: 900; color: #374151; }
+        .empty {
+            padding: 30px;
+            color: var(--muted);
+            text-align: center;
+            border: 1px dashed var(--line);
+            border-radius: 10px;
+            background: #f9fafb;
         }
 
-        .qa-card {
-            background:white;
-            width:200px;
-            padding:25px 15px;
-            border-radius:14px;
-            border:1px solid #e5e7eb;
-            text-align:center;
-            cursor:pointer;
-            transition:0.2s;
+        @media (max-width: 1000px) {
+            .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .content-grid { grid-template-columns: 1fr; }
+            .quick-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         }
-        .qa-card:hover {
-            border-color:#2563eb;
-            transform:translateY(-3px);
-        }
-        .qa-card img {
-            width:38px;
-            margin-bottom:10px;
-        }
-        .qa-title {
-            font-size:16px;
-            font-weight:bold;
-            color:#374151;
+        @media (max-width: 720px) {
+            .navbar { align-items: flex-start; flex-direction: column; padding: 14px 20px; }
+            .nav-menu { justify-content: flex-start; gap: 12px 16px; }
+            .container { width: min(100% - 28px, 1220px); padding-top: 24px; }
+            .hero { grid-template-columns: 1fr; }
+            .summary-grid,
+            .quick-actions,
+            .risk-row { grid-template-columns: 1fr; }
+            .risk-score { text-align: left; }
         }
     </style>
 </head>
-
 <body>
-
-<!-- NAVBAR -->
 <div class="navbar">
     <div class="nav-left">
-        <img src="{{ url_for('static', filename='logo.png') }}" class="nav-logo">
-        <span class="nav-title">NeuroSense</span>
+        <img src="{{ url_for('static', filename='logo.png') }}" class="nav-logo" alt="NeuroPredict">
+        <span class="nav-title">NeuroPredict</span>
     </div>
 
     <div class="nav-menu">
-
-        <a href="{{ url_for('patient_dashboard') }}"
-           class="{{ 'active' if active_page=='dashboard' else '' }}">
-           Dashboard
-        </a>
-
-        <a href="assessment"
-           class="{{ 'active' if active_page=='assessment' else '' }}">
-           Start Assessment
-        </a>
-
-        <a href="timeline" 
-           class="{{ 'active' if active_page=='timeline' else '' }}">
-           Health Timeline
-        </a>
-
-        <a href="ehr"
-           class="{{ 'active' if active_page=='ehr' else '' }}">
-           My EHR
-        </a>
-
-        <a href="patient_profile"
-           class="{{ 'active' if active_page=='profile' else '' }}">
-           My Profile
-        </a>
-
-        <!-- LOGOUT -->
-        <a href="logout" class="logout">
-            Logout
-        </a>
-
+        <a href="{{ url_for('patient_dashboard') }}" class="active">Dashboard</a>
+        <a href="{{ url_for('assessment') }}">Start Assessment</a>
+        <a href="{{ url_for('patient_timeline') }}">Health Timeline</a>
+        <a href="{{ url_for('patient_ehr') }}">My EHR</a>
+        <a href="{{ url_for('patient_profile') }}">My Profile</a>
+        <a href="{{ url_for('logout') }}" class="logout">Logout</a>
     </div>
 </div>
 
-<!-- MAIN CONTENT -->
-<div class="container">
+<main class="container">
+    <section class="hero">
+        <div>
+            <h1 class="title">Welcome back, {{ patient }}.</h1>
+            <p class="subtitle">Your neurological health overview, progress, and next steps in one place.</p>
+        </div>
+        <a href="{{ url_for('assessment') }}" class="primary-link">Start Assessment</a>
+    </section>
 
-    <div class="title">Welcome back, {{ patient }}!</div>
-    <div class="subtitle">Here’s your health overview</div>
+    <section class="summary-grid" aria-label="Health summary">
+        <article class="summary-card">
+            <div class="summary-label">Assessments</div>
+            <div class="summary-value">{{ assessment_count }}</div>
+            <div class="summary-note">Completed neurological screenings</div>
+        </article>
+        <article class="summary-card">
+            <div class="summary-label">Latest Result</div>
+            <div class="summary-value">{{ diagnostic.primary_diagnosis or "Pending" }}</div>
+            <div class="summary-note">
+                {% if latest_assessment_date %}Updated {{ latest_assessment_date.strftime('%d %b %Y') }}{% else %}Take an assessment to begin{% endif %}
+            </div>
+        </article>
+        <article class="summary-card">
+            <div class="summary-label">Profile Progress</div>
+            <div class="summary-value">{{ profile_completion }}%</div>
+            <div class="summary-note">Complete profile data helps reports stay accurate</div>
+        </article>
+        <article class="summary-card">
+            <div class="summary-label">Timeline Updates</div>
+            <div class="summary-value">{{ recent_events|length }}</div>
+            <div class="summary-note">Recent clinical events and interventions</div>
+        </article>
+    </section>
 
-    <div class="section-title">Your Risk Assessments</div>
-    <div class="section-sub">No assessments yet. Start one to see your risk scores.</div>
+    <section class="content-grid">
+        <div class="panel">
+            <h2 class="panel-title">Risk Progress Overview</h2>
+            {% if risk_scores %}
+                <div class="risk-list">
+                    {% for r in risk_scores %}
+                        <div class="risk-row">
+                            <div class="risk-name">{{ r.disease }}</div>
+                            <div class="risk-track">
+                                <div class="risk-fill" style="width: {{ r.score }}%;"></div>
+                            </div>
+                            <div class="risk-score">{{ "%.0f"|format(r.score) }}%</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty">No assessments yet. Start one to see your risk scores.</div>
+            {% endif %}
+        </div>
 
-    <div class="section-title">Quick Actions</div>
+        <div class="panel">
+            <h2 class="panel-title">Tips & Recommendations</h2>
+            <ul class="tip-list">
+                <li>Keep your medication and allergy details current in My EHR.</li>
+                <li>Repeat assessments when symptoms change or after clinical follow-up.</li>
+                <li>Track sleep, activity, and memory changes so your timeline stays useful.</li>
+            </ul>
+        </div>
 
-    <div class="quick-actions">
+        <div class="panel">
+            <h2 class="panel-title">Recent Activity</h2>
+            {% if recent_events %}
+                {% for e in recent_events %}
+                    <div class="activity-item">
+                        <strong>{{ e.title }}</strong>
+                        <span>{{ e.created_at.strftime('%d %b %Y, %I:%M %p') if e.created_at else "Date unavailable" }} | {{ e.event_type }}</span>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty">No recent timeline activity yet.</div>
+            {% endif %}
+        </div>
 
-        <a href="/assessment" class="qa-card" style="text-decoration:none;">
-            <img src="{{ url_for('static', filename='icon_assessment.png') }}">
+        <div class="panel">
+            <h2 class="panel-title">Health Snapshot</h2>
+            <div class="activity-item"><strong>Age</strong><span>{{ patient_info.age or "Not provided" }}</span></div>
+            <div class="activity-item"><strong>Blood Type</strong><span>{{ patient_info.blood_type or "Not provided" }}</span></div>
+            <div class="activity-item"><strong>Phone</strong><span>{{ patient_info.phone or "Not provided" }}</span></div>
+        </div>
+    </section>
+
+    <section class="quick-actions" aria-label="Quick actions">
+        <a href="{{ url_for('assessment') }}" class="action-card">
+            <img src="{{ url_for('static', filename='icon_assessment.png') }}" alt="">
             <div class="qa-title">Start Assessment</div>
         </a>
-
-        <a href="/timeline" class="qa-card" style="text-decoration:none;">
-            <img src="{{ url_for('static', filename='icon_timeline.png') }}">
+        <a href="{{ url_for('patient_timeline') }}" class="action-card">
+            <img src="{{ url_for('static', filename='icon_timeline.png') }}" alt="">
             <div class="qa-title">Health Timeline</div>
         </a>
-
-        <a href="/ehr" class="qa-card" style="text-decoration:none;">
-            <img src="{{ url_for('static', filename='icon_ehr.png') }}">
+        <a href="{{ url_for('patient_ehr') }}" class="action-card">
+            <img src="{{ url_for('static', filename='icon_ehr.png') }}" alt="">
             <div class="qa-title">My EHR</div>
         </a>
-
-        <a href="/patient_profile" class="qa-card" style="text-decoration:none;">
-            <img src="{{ url_for('static', filename='icon_profile.png') }}">
+        <a href="{{ url_for('patient_profile') }}" class="action-card">
+            <img src="{{ url_for('static', filename='icon_profile.png') }}" alt="">
             <div class="qa-title">My Profile</div>
         </a>
-
-    </div>
-
-</div>
-
+    </section>
+</main>
 </body>
 </html>

@@ -1,228 +1,240 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <title>My Profile - NeuroSense</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - NeuroPredict</title>
     <style>
-        body { margin:0; font-family:Arial; background:#f8fafc; }
-
-        .navbar {
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            padding:14px 35px;
-            background:white;
-            border-bottom:1px solid #e5e7eb;
-        }
+        :root { --bg:#f5f7fb; --surface:#fff; --line:#e5e7eb; --text:#111827; --muted:#6b7280; --primary:#2563eb; --danger:#dc2626; --shadow:0 18px 45px rgba(15,23,42,.08); }
+        * { box-sizing:border-box; }
+        body { margin:0; font-family:Arial,sans-serif; color:var(--text); background:var(--bg); }
+        .navbar { display:flex; justify-content:space-between; align-items:center; gap:22px; padding:14px 32px; background:#fff; border-bottom:1px solid var(--line); }
         .nav-left { display:flex; align-items:center; gap:10px; }
-        .nav-logo { width:35px; }
-        .nav-title { font-size:22px; font-weight:bold; }
-
-        .nav-menu a {
-            margin:0 18px;
-            text-decoration:none;
-            color:#4b5563;
-            font-weight:500;
-            padding-bottom:6px;
-        }
-        .nav-menu a.active {
-            color:#2563eb;
-            border-bottom:3px solid #2563eb;
-        }
-
-        .container {
-            padding:40px 55px;
-            max-width:1100px;
-            margin:auto;
-        }
-
-        .title { font-size:32px; font-weight:bold; }
-        .subtitle { color:#6b7280; margin-bottom:25px; }
-
-        .tabs {
-            display:flex;
-            gap:20px;
-            border-bottom:1px solid #e5e7eb;
-            margin-bottom:25px;
-            padding-bottom:10px;
-        }
-        .tab {
-            font-size:16px;
-            font-weight:500;
-            cursor:pointer;
-            padding:8px 15px;
-            border-radius:8px;
-            color:#4b5563;
-        }
-        .tab.active { background:#2563eb; color:white; }
-
-        .profile-box {
-            background:white;
-            padding:25px;
-            border-radius:12px;
-            border:1px solid #e5e7eb;
-        }
-
-        .form-row {
-            display:flex;
-            justify-content:space-between;
-            gap:20px;
-            margin-top:15px;
-        }
-
-        label {
-            font-size:14px;
-            color:#374151;
-            font-weight:500;
-        }
-
-        input, select {
-            margin-top:6px;
-            width:100%;
-            padding:12px;
-            border:1px solid #d1d5db;
-            border-radius:10px;
-            font-size:15px;
-        }
-
-        .save-btn {
-            margin-top:25px;
-            padding:12px 25px;
-            background:#2563eb;
-            color:white;
-            border:none;
-            border-radius:10px;
-            cursor:pointer;
-            font-size:16px;
-        }
-        .save-btn:hover { background:#1d4ed8; }
+        .nav-logo { width:36px; height:36px; object-fit:contain; }
+        .nav-title { font-size:22px; font-weight:900; }
+        .nav-menu { display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+        .nav-menu a { color:#4b5563; text-decoration:none; font-weight:700; font-size:14px; padding:8px 0; border-bottom:2px solid transparent; transition:color .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease; }
+        .nav-menu a.active,.nav-menu a:hover { color:var(--primary); border-bottom-color:var(--primary); }
+        .nav-menu a.logout { color:var(--danger); padding:8px 12px; border-radius:8px; }
+        .nav-menu a.logout:hover { color:#fff; border-bottom-color:transparent; background:var(--danger); box-shadow:0 10px 24px rgba(220,38,38,.25); }
+        .container { width:min(1100px,calc(100% - 40px)); margin:0 auto; padding:34px 0 48px; }
+        .title { margin:0; font-size:clamp(28px,4vw,36px); line-height:1.1; }
+        .subtitle { margin:8px 0 24px; color:var(--muted); }
+        .tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+        .tab { min-height:40px; padding:0 16px; border:1px solid var(--line); border-radius:8px; background:#fff; color:#4b5563; cursor:pointer; font-weight:900; transition:color .2s ease,background .2s ease,border-color .2s ease; }
+        .tab.active { color:#fff; background:var(--primary); border-color:var(--primary); }
+        .profile-box { background:#fff; border:1px solid var(--line); border-radius:12px; padding:26px; box-shadow:var(--shadow); }
+        .tab-panel { display:none; }
+        .tab-panel.active { display:block; }
+        .panel-title { margin:0; font-size:22px; }
+        .panel-sub { margin:8px 0 22px; color:var(--muted); }
+        .form-row { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; margin-bottom:18px; }
+        .full { grid-column:1 / -1; }
+        label { display:block; margin-bottom:7px; color:#374151; font-size:14px; font-weight:800; }
+        input,select { width:100%; min-height:44px; padding:11px 12px; border:1px solid #d1d5db; border-radius:8px; background:#fff; font-size:15px; transition:border-color .2s ease,box-shadow .2s ease; }
+        input:focus,select:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 4px rgba(37,99,235,.12); }
+        input[readonly] { color:#6b7280; background:#f9fafb; }
+        .setting-list { display:grid; gap:14px; }
+        .setting-row { display:flex; justify-content:space-between; align-items:center; gap:18px; padding:16px; border:1px solid #eef2f7; border-radius:10px; background:#fbfdff; }
+        .setting-row strong { display:block; margin-bottom:4px; }
+        .setting-row span { color:var(--muted); font-size:13px; line-height:1.4; }
+        .toggle { position:relative; width:50px; height:28px; flex:0 0 auto; }
+        .toggle input { opacity:0; width:0; height:0; }
+        .slider { position:absolute; inset:0; border-radius:999px; background:#d1d5db; cursor:pointer; transition:background .2s ease; }
+        .slider::before { content:""; position:absolute; width:22px; height:22px; left:3px; top:3px; border-radius:999px; background:#fff; transition:transform .2s ease; box-shadow:0 2px 8px rgba(15,23,42,.18); }
+        .toggle input:checked + .slider { background:var(--primary); }
+        .toggle input:checked + .slider::before { transform:translateX(22px); }
+        .save-btn { min-height:46px; margin-top:24px; padding:0 22px; border:0; border-radius:8px; color:#fff; background:var(--primary); font-size:15px; font-weight:900; cursor:pointer; transition:transform .2s ease,box-shadow .2s ease; }
+        .save-btn:hover { transform:translateY(-2px); box-shadow:0 12px 24px rgba(37,99,235,.22); }
+        .toast { position:fixed; right:20px; bottom:20px; display:none; max-width:320px; padding:14px 18px; color:#fff; background:#111827; border-radius:8px; box-shadow:0 16px 32px rgba(15,23,42,.18); }
+        @media (max-width:760px) { .navbar{align-items:flex-start; flex-direction:column; padding:14px 20px;} .container{width:min(100% - 28px,1100px); padding-top:24px;} .form-row{grid-template-columns:1fr;} .full{grid-column:auto;} .setting-row{align-items:flex-start; flex-direction:column;} .save-btn{width:100%;} }
     </style>
 </head>
-
 <body>
-
-<!-- NAVBAR -->
 <div class="navbar">
     <div class="nav-left">
-        <img src="{{ url_for('static', filename='logo.png') }}" class="nav-logo">
-        <span class="nav-title">NeuroSense</span>
+        <img src="{{ url_for('static', filename='logo.png') }}" class="nav-logo" alt="NeuroPredict">
+        <span class="nav-title">NeuroPredict</span>
     </div>
-
     <div class="nav-menu">
-        <a href="{{ url_for('patient_dashboard') }}"
-           class="{{ 'active' if active_page=='dashboard' else '' }}">Dashboard</a>
-
-        <a href="assessment"
-           class="{{ 'active' if active_page=='assessment' else '' }}">Start Assessment</a>
-
-        <a href="timeline"
-           class="{{ 'active' if active_page=='timeline' else '' }}">Health Timeline</a>
-
-        <a href="ehr"
-           class="{{ 'active' if active_page=='ehr' else '' }}">My EHR</a>
-
-        <a href="patient_profile"
-           class="{{ 'active' if active_page=='profile' else '' }}">My Profile</a>
+        <a href="{{ url_for('patient_dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('assessment') }}">Start Assessment</a>
+        <a href="{{ url_for('patient_timeline') }}">Health Timeline</a>
+        <a href="{{ url_for('patient_ehr') }}">My EHR</a>
+        <a href="{{ url_for('patient_profile') }}" class="active">My Profile</a>
+        <a href="{{ url_for('logout') }}" class="logout">Logout</a>
     </div>
 </div>
 
-<div class="container">
+<main class="container">
+    <h1 class="title">My Profile</h1>
+    <p class="subtitle">Manage account details, security, notifications, and privacy preferences.</p>
 
-    <div class="title">My Profile</div>
-    <div class="subtitle">Manage your account settings and preferences</div>
-
-    <div class="tabs">
-        <div class="tab active">Personal</div>
-        <div class="tab">Security</div>
-        <div class="tab">Notifications</div>
-        <div class="tab">Privacy</div>
+    <div class="tabs" role="tablist" aria-label="Profile sections">
+        <button type="button" class="tab active" data-tab="personal">Personal</button>
+        <button type="button" class="tab" data-tab="security">Security</button>
+        <button type="button" class="tab" data-tab="notifications">Notifications</button>
+        <button type="button" class="tab" data-tab="privacy">Privacy</button>
     </div>
 
-    <!-- PROFILE FORM -->
-    <form action="{{ url_for('update_profile') }}" method="POST">
-        <div class="profile-box">
+    <form action="{{ url_for('update_profile') }}" method="POST" id="profileForm">
+        <section class="profile-box">
+            <div class="tab-panel active" id="personal">
+                <h2 class="panel-title">Personal Information</h2>
+                <p class="panel-sub">Keep your demographic details current for better report context.</p>
 
-            <h3>Personal Information</h3>
-            <p style="color:#6b7280;">Update your personal details</p>
+                <div class="form-row">
+                    <div class="full">
+                        <label for="full_name">Full Name</label>
+                        <input id="full_name" type="text" name="full_name" value="{{ info.full_name or '' }}" required>
+                    </div>
+                </div>
 
-            <!-- FULL NAME -->
-            <div class="form-row">
-                <div style="width:100%;">
-                    <label>Full Name</label>
-                    <input type="text"
-                           name="full_name"
-                           value="{{ info.full_name }}"
-                           required>
+                <div class="form-row">
+                    <div>
+                        <label for="email">Email Address</label>
+                        <input id="email" type="email" value="{{ info.email or '' }}" readonly>
+                    </div>
+                    <div>
+                        <label for="phone">Phone Number</label>
+                        <input id="phone" type="tel" name="phone" value="{{ info.phone or '' }}" pattern="[0-9]{10}" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div>
+                        <label for="age">Age</label>
+                        <input id="age" type="number" name="age" min="1" max="120" value="{{ info.age or '' }}" required>
+                    </div>
+                    <div>
+                        <label for="gender">Gender</label>
+                        <select id="gender" name="gender" required>
+                            {% for item in ["Female", "Male", "Other"] %}
+                                <option value="{{ item }}" {{ "selected" if info.gender == item else "" }}>{{ item }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div>
+                        <label for="blood_type">Blood Type</label>
+                        <select id="blood_type" name="blood_type" required>
+                            {% for item in ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"] %}
+                                <option value="{{ item }}" {{ "selected" if info.blood_type == item else "" }}>{{ item }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            <!-- EMAIL + PHONE -->
-            <div class="form-row">
-                <div style="width:48%;">
-                    <label>Email Address</label>
-                    <input type="email"
-                           name="email"
-                           value="{{ info.email }}"
-                           readonly>
+            <div class="tab-panel" id="security">
+                <h2 class="panel-title">Security</h2>
+                <p class="panel-sub">Update sign-in details and local security preferences.</p>
+                <div class="form-row">
+                    <div>
+                        <label for="password">Password</label>
+                        <input id="password" type="password" name="password" value="{{ info.password or '' }}">
+                    </div>
+                    <div>
+                        <label for="sessionTimeout">Session Timeout</label>
+                        <select id="sessionTimeout" data-setting="sessionTimeout">
+                            <option value="15">15 minutes</option>
+                            <option value="30">30 minutes</option>
+                            <option value="60">60 minutes</option>
+                        </select>
+                    </div>
                 </div>
-                <div style="width:48%;">
-                    <label>Password</label>
-                    <input type="password"
-                           name="password"
-                           value="{{ info.password }}"
-                           
-                           required>
-                </div> 
-                <div style="width:48%;">
-                    <label>Phone Number</label>
-                    <input type="tel"
-                           name="phone"
-                           value="{{ info.phone }}"
-                           pattern="[0-9]{10}"
-                           required>
-                </div>
-            </div>
-
-            <!-- AGE + GENDER -->
-            <div class="form-row">
-                <div style="width:48%;">
-                    <label>Age</label>
-                    <input type="number"
-                           name="age"
-                           min="1"
-                           max="120"
-                           value="{{ info.age }}"
-                           required>
-                </div>
-
-                <div style="width:48%;">
-                    <label>Gender</label>
-                    <select name="gender" required>
-                        <option value="Female" {{ "selected" if info.gender=='Female' else "" }}>Female</option>
-                        <option value="Male" {{ "selected" if info.gender=='Male' else "" }}>Male</option>
-                        <option value="Other" {{ "selected" if info.gender=='Other' else "" }}>Other</option>
-                    </select>
+                <div class="setting-list">
+                    <div class="setting-row">
+                        <div><strong>Require sign-in on shared devices</strong><span>Show a reminder when using public or shared systems.</span></div>
+                        <label class="toggle"><input type="checkbox" data-setting="sharedDeviceSignIn" checked><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div><strong>Security alerts</strong><span>Notify me about important account activity.</span></div>
+                        <label class="toggle"><input type="checkbox" data-setting="securityAlerts" checked><span class="slider"></span></label>
+                    </div>
                 </div>
             </div>
 
-            <!-- BLOOD TYPE -->
-            <div style="width:48%; margin-top:20px;">
-                <label>Blood Type</label>
-                <select name="blood_type" required>
-                    <option value="A+" {{ "selected" if info.blood_type=='A+' else "" }}>A+</option>
-                    <option value="A-" {{ "selected" if info.blood_type=='A-' else "" }}>A−</option>
-                    <option value="B+" {{ "selected" if info.blood_type=='B+' else "" }}>B+</option>
-                    <option value="O+" {{ "selected" if info.blood_type=='O+' else "" }}>O+</option>
-                </select>
+            <div class="tab-panel" id="notifications">
+                <h2 class="panel-title">Notifications</h2>
+                <p class="panel-sub">Choose reminders that help you stay on top of care tasks.</p>
+                <div class="setting-list">
+                    <div class="setting-row">
+                        <div><strong>Assessment reminders</strong><span>Receive prompts to repeat assessments periodically.</span></div>
+                        <label class="toggle"><input type="checkbox" data-setting="assessmentReminders" checked><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div><strong>Timeline updates</strong><span>Notify me when reports or interventions are added.</span></div>
+                        <label class="toggle"><input type="checkbox" data-setting="timelineUpdates" checked><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div><strong>Care recommendations</strong><span>Show practical follow-up suggestions after assessments.</span></div>
+                        <label class="toggle"><input type="checkbox" data-setting="careRecommendations" checked><span class="slider"></span></label>
+                    </div>
+                </div>
             </div>
 
-            <button class="save-btn" type="submit">Save Changes</button>
-        </div>
+            <div class="tab-panel" id="privacy">
+                <h2 class="panel-title">Privacy</h2>
+                <p class="panel-sub">Control how your health information is shown inside NeuroPredict.</p>
+                <div class="setting-list">
+                    <div class="setting-row">
+                        <div><strong>Share EHR with assigned doctor</strong><span>Allow clinicians to view EHR context for care planning.</span></div>
+                        <label class="toggle"><input type="checkbox" data-setting="shareEhr" checked><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div><strong>Allow report export</strong><span>Permit PDF downloads from My EHR and Health Timeline.</span></div>
+                        <label class="toggle"><input type="checkbox" data-setting="allowExport" checked><span class="slider"></span></label>
+                    </div>
+                    <div class="setting-row">
+                        <div><strong>Show recent activity</strong><span>Display timeline activity on your dashboard.</span></div>
+                        <label class="toggle"><input type="checkbox" data-setting="showActivity" checked><span class="slider"></span></label>
+                    </div>
+                </div>
+            </div>
+
+            <button class="save-btn" type="submit">Save Settings</button>
+        </section>
     </form>
+</main>
 
-</div>
+<div id="toast" class="toast"></div>
 
+<script>
+const storagePrefix = "neuropredict.profile.";
+
+document.querySelectorAll(".tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach((item) => item.classList.remove("active"));
+        document.querySelectorAll(".tab-panel").forEach((panel) => panel.classList.remove("active"));
+        tab.classList.add("active");
+        document.getElementById(tab.dataset.tab).classList.add("active");
+    });
+});
+
+document.querySelectorAll("[data-setting]").forEach((control) => {
+    const key = storagePrefix + control.dataset.setting;
+    const saved = localStorage.getItem(key);
+    if (saved !== null) {
+        if (control.type === "checkbox") {
+            control.checked = saved === "true";
+        } else {
+            control.value = saved;
+        }
+    }
+    control.addEventListener("change", () => {
+        localStorage.setItem(key, control.type === "checkbox" ? control.checked : control.value);
+    });
+});
+
+document.getElementById("profileForm").addEventListener("submit", () => {
+    document.querySelectorAll("[data-setting]").forEach((control) => {
+        const key = storagePrefix + control.dataset.setting;
+        localStorage.setItem(key, control.type === "checkbox" ? control.checked : control.value);
+    });
+});
+</script>
 </body>
 </html>

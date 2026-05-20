@@ -30,33 +30,51 @@ app.config["MYSQL_CURSORCLASS"] = "DictCursor"
 
 mysql = MySQL(app)
 
+MULTI_VALUE_FIELDS = {
+    "familyHistory",
+    "medicalConditions",
+    "medications",
+    "neurologicalSymptoms",
+}
+
+
+def parse_json_field(value, fallback=None):
+    if fallback is None:
+        fallback = {}
+    try:
+        return json.loads(value) if value else fallback
+    except (TypeError, json.JSONDecodeError):
+        return fallback
+
+
+def as_list(value):
+    if not value:
+        return []
+    if isinstance(value, list):
+        return [item for item in value if item]
+    if isinstance(value, str):
+        return [item.strip() for item in value.split(",") if item.strip()]
+    return [value]
+
+
+def collect_assessment_form(form):
+    data = {}
+    for key in form.keys():
+        if key == "direction":
+            continue
+        values = form.getlist(key)
+        if key in MULTI_VALUE_FIELDS:
+            data[key] = values
+        else:
+            data[key] = values[0] if values else ""
+    return data
+
 # ---------------------------
 # HOME PAGE
 # ---------------------------
 @app.route("/")
 def index():
     return render_template("patient_login.html")
-
-@app.route("/check")
-def check():
-    if "doctor_id" not in session:
-        return redirect(url_for("doctor_login"))
-
-    cur = mysql.connection.cursor()
-
-    cur.execute("""
-        SELECT id, full_name
-        FROM patients
-        WHERE full_name IS NOT NULL AND full_name != ''
-        ORDER BY full_name
-    """)
-    patients = cur.fetchall()
-
-    return render_template(
-        "check.html",
-        patients=patients
-    )
-   
 
 # ---------------------------
 # PATIENT SIGNUP
@@ -134,6 +152,10 @@ def update_profile():
 
     try:
         cur = mysql.connection.cursor()
+        if not password:
+            cur.execute("SELECT password FROM patients WHERE id = %s", (pid,))
+            existing = cur.fetchone() or {}
+            password = existing.get("password")
 
         cur.execute("""
             UPDATE patients
@@ -197,7 +219,10 @@ def patient_timeline():
     return render_template(
         "patient_timeline.html",
         events=events,
-        active_page="timeline"
+        active_page="timeline",
+        selected_type=event_type or "",
+        selected_disease=disease or "",
+        is_filtered=bool(event_type or disease)
     )
 
 
@@ -266,26 +291,37 @@ def patient_ehr():
     cur.execute("SELECT * FROM patients WHERE id=%s", (pid,))
     info = cur.fetchone()
 
-    # Assessments
     cur.execute("""
-        SELECT diag, created_at
+        SELECT form_data, diag, created_at
         FROM assessments
         WHERE patient_id=%s
         ORDER BY created_at DESC
     """, (pid,))
     assessments = cur.fetchall()
 
-    # ✅ Parse diag JSON here
+    latest_form = {}
     for a in assessments:
-        try:
-            a["diag"] = json.loads(a["diag"])
-        except:
-            a["diag"] = {}
+        a["diag"] = parse_json_field(a.get("diag"), {})
+        a["form_data"] = parse_json_field(a.get("form_data"), {})
+
+    if assessments:
+        latest_form = assessments[0].get("form_data") or {}
+
+    medical_history = {
+        "family": as_list(latest_form.get("familyHistory")),
+        "conditions": as_list(latest_form.get("medicalConditions")),
+        "neurological": as_list(latest_form.get("neurologicalSymptoms")),
+    }
+    medications = as_list(latest_form.get("medications"))
+    allergies = as_list(latest_form.get("allergies"))
 
     return render_template(
         "patient_ehr.html",
         info=info,
         assessments=assessments,
+        medical_history=medical_history,
+        medications=medications,
+        allergies=allergies,
         active_page="ehr"
     )
 
@@ -382,7 +418,72 @@ def patient_profile():
 def patient_dashboard():
     if "patient_id" not in session:
         return redirect(url_for("patient_login"))
-    return render_template("patient_dashboard.html")
+
+    pid = session["patient_id"]
+    cur = mysql.connection.cursor()
+
+    cur.execute("""
+        SELECT full_name, phone, age, gender, blood_type
+        FROM patients
+        WHERE id=%s
+    """, (pid,))
+    patient_info = cur.fetchone() or {}
+
+    cur.execute("""
+        SELECT alz, park, dem, diag, created_at
+        FROM assessments
+        WHERE patient_id=%s
+        ORDER BY created_at DESC
+        LIMIT 1
+    """, (pid,))
+    latest_assessment = cur.fetchone()
+
+    risk_scores = []
+    diagnostic = {}
+    latest_assessment_date = None
+    if latest_assessment:
+        latest_assessment_date = latest_assessment.get("created_at")
+        for key in ("alz", "park", "dem"):
+            parsed = parse_json_field(latest_assessment.get(key), {})
+            if parsed:
+                risk_scores.append(parsed)
+        diagnostic = parse_json_field(latest_assessment.get("diag"), {})
+
+    cur.execute("""
+        SELECT title, description, disease, event_type, created_at
+        FROM health_events
+        WHERE patient_id=%s
+        ORDER BY created_at DESC
+        LIMIT 4
+    """, (pid,))
+    recent_events = cur.fetchall()
+
+    cur.execute("SELECT COUNT(*) AS total FROM assessments WHERE patient_id=%s", (pid,))
+    assessment_count = cur.fetchone()["total"]
+
+    profile_fields = [
+        patient_info.get("full_name"),
+        patient_info.get("phone"),
+        patient_info.get("age"),
+        patient_info.get("gender"),
+        patient_info.get("blood_type"),
+    ]
+    profile_completion = round(
+        (sum(1 for field in profile_fields if field) / len(profile_fields)) * 100
+    )
+
+    return render_template(
+        "patient_dashboard.html",
+        active_page="dashboard",
+        patient=patient_info.get("full_name") or session.get("patient", "Patient"),
+        patient_info=patient_info,
+        risk_scores=risk_scores,
+        diagnostic=diagnostic,
+        latest_assessment_date=latest_assessment_date,
+        recent_events=recent_events,
+        assessment_count=assessment_count,
+        profile_completion=profile_completion,
+    )
 
 # ---------------------------
 # START ASSESSMENT (4 STEPS)
@@ -398,8 +499,12 @@ def assessment():
         session["form"]={}
 
     if request.method=="POST":
-        for k,v in request.form.items():
-            session["form"][k]=v
+        session["form"].update(collect_assessment_form(request.form))
+        session.modified = True
+
+        direction = request.form.get("direction", "next")
+        if direction == "previous":
+            return redirect(url_for("assessment", step=max(1, step-1)))
 
         if step<4:
             return redirect(url_for("assessment", step=step+1))
@@ -421,15 +526,21 @@ def assessment():
                 ))
             mysql.connection.commit()
 
-            session.pop("form")
+            session.pop("form", None)
 
             return render_template(
                 "assessment_result.html",
                 risk_scores=[alz.__dict__, park.__dict__, dem.__dict__],
                 diagnostic=diag.__dict__,
+                active_page="assessment",
             )
 
-    return render_template(f"assessment_step{step}.html", step=step)
+    return render_template(
+        f"assessment_step{step}.html",
+        step=step,
+        active_page="assessment",
+        form_data=session.get("form", {})
+    )
 
 # ---------------------------
 # DOCTOR LOGIN
@@ -459,6 +570,8 @@ def doctor_dashboard():
         return redirect(url_for("doctor_login"))
 
     cur = mysql.connection.cursor()
+    cur.execute("SELECT name FROM doctors WHERE id=%s", (session["doctor_id"],))
+    doctor_row = cur.fetchone() or {}
 
     # Total patients
     cur.execute("SELECT COUNT(*) AS total FROM patients")
@@ -513,7 +626,8 @@ def doctor_dashboard():
         pending=pending,
         alerts=alerts,
         patients=patients,
-        activities=activities
+        activities=activities,
+        doctor=doctor_row.get("name", "Doctor")
     )
 
 # ---------------------------
@@ -548,28 +662,6 @@ def doctor_patients():
         "patient_management.html",
         patients=patients,
         search=search
-    )
-
-
-
-@app.route("/doctor_diagnostics_dash")
-def doctor_diagnostics_page():
-    if "doctor_id" not in session:
-        return redirect(url_for("doctor_login"))
-
-    cur = mysql.connection.cursor()
-
-    cur.execute("""
-        SELECT id, full_name
-        FROM patients
-        WHERE full_name IS NOT NULL AND full_name != ''
-        ORDER BY full_name
-    """)
-    patients = cur.fetchall()
-
-    return render_template(
-        "diagnostics.html",
-        patients=patients
     )
 
 
@@ -706,7 +798,7 @@ def run_diagnostics():
         try:
             result = model_manager.predict_diagnostic(data)
         except Exception as e:
-            print("⚠️ ML Error → fallback:", e)
+            print("ML Error -> fallback:", e)
             result = model_manager._fallback_diagnostic(data)
 
         # ----------------------------------
@@ -740,7 +832,7 @@ def run_diagnostics():
         ))
 
         mysql.connection.commit()
-        report_id = cur.lastrowid   # ✅ GUARANTEED
+        report_id = cur.lastrowid
 
         # ----------------------------------
         # 3. INSERT HEALTH EVENT
@@ -793,7 +885,7 @@ def run_diagnostics():
         })
 
     except Exception as e:
-        print("🔥 CRITICAL ERROR:", e, traceback.format_exc())
+        print("CRITICAL ERROR:", e, traceback.format_exc())
 
         return jsonify({
             "status": "error",
@@ -956,7 +1048,7 @@ def run_diagnostics_flask():
         patient_id = body.get("patient_id")
         doctor_id = body.get("doctor_id")
 
-        print("=== Starting Diagnostics for Patient:", patient_id, "===")
+        print("=== Starting report generation for Patient:", patient_id, "===")
 
         # -------------------------------
         # STEP 1 — MODEL PREDICTION
@@ -964,7 +1056,7 @@ def run_diagnostics_flask():
         try:
             diagnostic_result = model_manager.predict_diagnostic(body)
         except Exception as e:
-            print("⚠️ Model Error — Using fallback:", e)
+            print("Model Error - Using fallback:", e)
             diagnostic_result = model_manager._fallback_diagnostic(body)
 
         if not diagnostic_result:
@@ -1005,7 +1097,7 @@ def run_diagnostics_flask():
             report_id = cur.lastrowid
 
         except Exception as e:
-            print("⚠️ DB Error inserting diagnostic report:", e)
+            print("DB Error inserting diagnostic report:", e)
             report_id = f"temp_{int(datetime.utcnow().timestamp())}"
 
         # -------------------------------
@@ -1027,7 +1119,7 @@ def run_diagnostics_flask():
             ))
             mysql.connection.commit()
         except Exception as e:
-            print("⚠️ Error inserting health event:", e)
+            print("Error inserting health event:", e)
 
         # -------------------------------
         # STEP 4 — AUDIT LOG
@@ -1047,7 +1139,7 @@ def run_diagnostics_flask():
             ))
             mysql.connection.commit()
         except Exception as e:
-            print("⚠️ Error inserting audit log:", e)
+            print("Error inserting audit log:", e)
 
         # -------------------------------
         # FINAL SUCCESS RESPONSE
@@ -1065,7 +1157,7 @@ def run_diagnostics_flask():
         })
 
     except Exception as e:
-        print("🔥 CRITICAL ERROR:", e, traceback.format_exc())
+        print("CRITICAL ERROR:", e, traceback.format_exc())
 
         return jsonify({
             "report_id": f"error_{int(datetime.utcnow().timestamp())}",
